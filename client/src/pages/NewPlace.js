@@ -1,25 +1,33 @@
 import { useEffect, useState } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
+import { useMutation, useQueryClient } from 'react-query'
+import ClipLoader from 'react-spinners/ClipLoader'
+
+import { useMainContext } from '../context/MainContext'
+import {
+  CREATE_PLACE_ERROR,
+  CREATE_PLACE_SUCCESS,
+  EDIT_PLACE_SUCCESS,
+  EDIT_PLACE_ERROR,
+} from '../context/actions'
+
 import Wrapper from '../assets/wrappers/NewPlace'
 import Alert from '../components/Alert'
-import { useMainContext } from '../context/MainContext'
-import { useNavigate } from 'react-router-dom'
+import { createNewPlace, editPlace } from '../api/placesAPI'
 
 const initialValues = { name: '', location: '', image: '', description: '' }
 
 const NewPlace = () => {
-  const {
-    createNewPlace,
-    showAlert,
-    isLoading,
-    isEditing,
-    editingId,
-    editPlace,
-    displayAlert,
-    allPlaces,
-  } = useMainContext()
-  const [values, setValues] = useState(initialValues)
-
+  const { showAlert, displayAlert, dispatch, clearAlert } = useMainContext()
+  const queryClient = useQueryClient()
   const navigate = useNavigate()
+
+  const location = useLocation()
+  const isEditing = location.state?.isEditing
+  const currentPlace = location.state?.currentPlace
+  const editId = currentPlace?._id
+
+  const [values, setValues] = useState(initialValues)
 
   const handleChange = (event) => {
     setValues((values) => {
@@ -27,21 +35,58 @@ const NewPlace = () => {
     })
   }
 
-  useEffect(() => {
-    if (isEditing) {
-      const currentPlace = allPlaces.find((place) => place._id === editingId)
-      const { name, location, image, description } = currentPlace
-      setValues({ name, location, image, description })
-    }
-  }, [])
-
   const clearValues = () => {
     setValues(initialValues)
   }
-
-  const editSuccess = () => {
-    navigate(`/places/${editingId}`)
-  }
+  //create place mutation
+  const { mutate: createPlaceMutation, isLoading } = useMutation(
+    (values) => createNewPlace(values, 'abcde'),
+    {
+      onSuccess: (data) => {
+        queryClient.invalidateQueries('places')
+        clearValues()
+        dispatch({ type: CREATE_PLACE_SUCCESS })
+        navigate(`/places/${data._id}`)
+        clearAlert()
+      },
+      onError: (error) => {
+        dispatch({
+          type: CREATE_PLACE_ERROR,
+          payload: { msg: error.response.data.msg },
+        })
+        clearAlert()
+      },
+    }
+  )
+  //edit place mutation
+  const { mutate: editPlaceMutation, isLoading: isEditingLoading } =
+    useMutation((values) => editPlace(values, editId, 'abcde'), {
+      onSuccess: (data) => {
+        queryClient.invalidateQueries('places')
+        clearValues()
+        dispatch({ type: EDIT_PLACE_SUCCESS })
+        navigate(`/places/${currentPlace._id}`)
+        clearAlert()
+      },
+      onError: (error) => {
+        dispatch({
+          type: EDIT_PLACE_ERROR,
+          payload: { msg: error.response.data.msg },
+        })
+        clearAlert()
+      },
+    })
+  //set initial values while editing
+  useEffect(() => {
+    if (isEditing) {
+      setValues({
+        name: currentPlace?.name,
+        image: currentPlace?.image,
+        location: currentPlace?.location,
+        description: currentPlace?.description,
+      })
+    }
+  }, [])
 
   const handleSubmit = (event) => {
     event.preventDefault()
@@ -51,10 +96,10 @@ const NewPlace = () => {
       return
     }
     if (isEditing) {
-      editPlace(values, clearValues, editSuccess)
+      editPlaceMutation(values)
       return
     }
-    createNewPlace(values, clearValues)
+    createPlaceMutation(values)
   }
 
   return (
@@ -110,8 +155,15 @@ const NewPlace = () => {
             onChange={handleChange}
           />
         </div>
-        <button disabled={isLoading} className="btn btn-block">
-          Submit
+        <button
+          disabled={isLoading || isEditingLoading}
+          className="btn btn-block"
+        >
+          {isLoading || isEditingLoading ? (
+            <ClipLoader color="#ffffff" size="1rem" />
+          ) : (
+            'Submit'
+          )}
         </button>
       </form>
     </Wrapper>

@@ -3,13 +3,16 @@ import Wrapper from '../assets/wrappers/AllPlaces'
 import Loading from '../components/Loading'
 import Alert from '../components/Alert'
 import { useMainContext } from '../context/MainContext'
-import { useEffect } from 'react'
+import { useQuery } from 'react-query'
+import { getAllPlaces } from '../api/placesAPI'
+import { GET_PLACES_ERROR } from '../context/actions'
 
 const AllPlaces = () => {
-  const { isLoading, showAlert, getAllPlaces, allPlaces } = useMainContext()
-  useEffect(() => {
-    getAllPlaces()
-  }, [])
+  const { showAlert, dispatch } = useMainContext()
+
+  const { data: allPlaces = [], isLoading } = useQuery('places', getAllPlaces, {
+    onError: () => dispatch({ type: GET_PLACES_ERROR }),
+  })
 
   const places = allPlaces.map((place) => {
     const { name, location, description, image, _id } = place
@@ -24,12 +27,13 @@ const AllPlaces = () => {
       />
     )
   })
-
+  if (isLoading) {
+    return <Loading />
+  }
   return (
     <Wrapper>
       {showAlert && <Alert />}
       <h1>All Places</h1>
-      {isLoading && <Loading />}
       <div className="container">{places}</div>
     </Wrapper>
   )

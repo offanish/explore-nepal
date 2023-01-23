@@ -1,23 +1,10 @@
-import React, { useReducer, useContext, useCallback } from 'react'
+import React, { useReducer, useContext } from 'react'
 import axios from 'axios'
 import reducer from './reducer'
 import {
   DISPLAY_ALERT,
   CLEAR_ALERT,
-  CREATE_PLACE_BEGIN,
-  CREATE_PLACE_SUCCESS,
-  CREATE_PLACE_ERROR,
-  GET_PLACES_BEGIN,
-  GET_PLACES_SUCCESS,
-  GET_PLACES_ERROR,
   NAVIGATE_PAGE,
-  DELETE_PLACE_BEGIN,
-  DELETE_PLACE_SUCCESS,
-  DELETE_PLACE_ERROR,
-  SET_EDIT_PLACE,
-  EDIT_PLACE_BEGIN,
-  EDIT_PLACE_SUCCESS,
-  EDIT_PLACE_ERROR,
   TOGGLE_IS_REGISTERED,
   REGISTER_USER_BEGIN,
   REGISTER_USER_SUCCESS,
@@ -58,73 +45,6 @@ export const MainContextProvider = ({ children }) => {
   }
   const navigatePage = () => {
     dispatch({ type: NAVIGATE_PAGE })
-  }
-
-  const createNewPlace = async (place, clearValues) => {
-    try {
-      dispatch({ type: CREATE_PLACE_BEGIN })
-      await axios.post('/api/places', place, {
-        headers: { authorization: `Bearer ${state.token}` },
-      })
-      dispatch({ type: CREATE_PLACE_SUCCESS })
-      clearValues()
-    } catch (error) {
-      dispatch({
-        type: CREATE_PLACE_ERROR,
-        payload: { msg: error.response.data.msg },
-      })
-    }
-    clearAlert()
-  }
-
-  const getAllPlaces = async () => {
-    try {
-      dispatch({ type: GET_PLACES_BEGIN })
-      const { data: allPlaces } = await axios.get('/api/places')
-      dispatch({ type: GET_PLACES_SUCCESS, payload: allPlaces })
-    } catch (error) {
-      dispatch({ type: GET_PLACES_ERROR })
-    }
-  }
-
-  const deletePlace = async (id, deleteSuccess) => {
-    try {
-      dispatch({ type: DELETE_PLACE_BEGIN })
-      await axios.delete(`/api/places/${id}`, {
-        headers: { authorization: `Bearer ${state.token}` },
-      })
-      deleteSuccess()
-      dispatch({ type: DELETE_PLACE_SUCCESS })
-    } catch (error) {
-      dispatch({
-        type: DELETE_PLACE_ERROR,
-        payload: { msg: error.response.data.msg },
-      })
-    }
-    clearAlert()
-  }
-
-  const setEditPlace = (id) => {
-    dispatch({ type: SET_EDIT_PLACE, payload: { editingId: id } })
-  }
-
-  const editPlace = async (newPlace, clearValues, editSuccess) => {
-    try {
-      dispatch({ type: EDIT_PLACE_BEGIN })
-      await axios.patch(`/api/places/${state.editingId}`, newPlace, {
-        headers: { authorization: `Bearer ${state.token}` },
-      })
-      dispatch({ type: EDIT_PLACE_SUCCESS })
-      clearValues()
-      getAllPlaces()
-      editSuccess()
-    } catch (error) {
-      dispatch({
-        type: EDIT_PLACE_ERROR,
-        payload: { msg: error.response.data.msg },
-      })
-    }
-    clearAlert()
   }
 
   const toggleIsRegistered = () => {
@@ -183,13 +103,10 @@ export const MainContextProvider = ({ children }) => {
     <MainContext.Provider
       value={{
         ...state,
+        dispatch,
         displayAlert,
-        createNewPlace,
-        getAllPlaces,
+        clearAlert,
         navigatePage,
-        editPlace,
-        deletePlace,
-        setEditPlace,
         toggleIsRegistered,
         registerUser,
         loginUser,

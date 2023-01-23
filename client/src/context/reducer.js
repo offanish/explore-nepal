@@ -1,18 +1,12 @@
 import {
   DISPLAY_ALERT,
   CLEAR_ALERT,
-  CREATE_PLACE_BEGIN,
   CREATE_PLACE_SUCCESS,
   CREATE_PLACE_ERROR,
-  GET_PLACES_BEGIN,
-  GET_PLACES_SUCCESS,
   GET_PLACES_ERROR,
-  DELETE_PLACE_BEGIN,
   DELETE_PLACE_SUCCESS,
   DELETE_PLACE_ERROR,
   NAVIGATE_PAGE,
-  SET_EDIT_PLACE,
-  EDIT_PLACE_BEGIN,
   EDIT_PLACE_SUCCESS,
   EDIT_PLACE_ERROR,
   TOGGLE_IS_REGISTERED,
@@ -52,18 +46,9 @@ const reducer = (state, action) => {
         isEditing: false,
         editingId: '',
       }
-    case CREATE_PLACE_BEGIN:
-      return {
-        ...state,
-        isLoading: true,
-        showAlert: true,
-        alertText: 'Creating new place, please wait ...',
-        alertType: 'success',
-      }
     case CREATE_PLACE_SUCCESS:
       return {
         ...state,
-        isLoading: false,
         showAlert: true,
         alertType: 'success',
         alertText: 'Place added successfully',
@@ -76,30 +61,13 @@ const reducer = (state, action) => {
         alertType: 'danger',
         alertText: action.payload.msg,
       }
-    case GET_PLACES_BEGIN:
-      return {
-        ...state,
-        isLoading: true,
-      }
-    case GET_PLACES_SUCCESS:
-      return {
-        ...state,
-        isLoading: false,
-        allPlaces: action.payload.allPlaces,
-      }
     case GET_PLACES_ERROR:
       return {
         ...state,
-        isLoading: true,
         showAlert: true,
         alertType: 'danger',
         alertText:
           "Couldn't load places. Please try again later and refresh the page",
-      }
-    case DELETE_PLACE_BEGIN:
-      return {
-        ...state,
-        isLoading: true,
       }
     case DELETE_PLACE_SUCCESS:
       return {
@@ -117,23 +85,9 @@ const reducer = (state, action) => {
         alertType: 'danger',
         alertText: action.payload.msg,
       }
-    case SET_EDIT_PLACE:
-      return {
-        ...state,
-        isEditing: true,
-        editingId: action.payload.editingId,
-      }
-    case EDIT_PLACE_BEGIN:
-      return {
-        ...state,
-        isLoading: true,
-      }
     case EDIT_PLACE_SUCCESS:
       return {
         ...state,
-        isLoading: false,
-        isEditing: false,
-        editingId: '',
         showAlert: true,
         alertType: 'success',
         alertText: 'Edited place successfully',
@@ -208,6 +162,8 @@ const reducer = (state, action) => {
         user: null,
         token: null,
       }
+    default:
+      return { ...state }
   }
 }
 export default reducer
