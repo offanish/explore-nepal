@@ -7,10 +7,8 @@ const addNewPlace = async (req, res, next) => {
     if (!name || !location || !image || !description) {
       throw new ExpressError(400, 'Please provide all values')
     }
-    req.body.createdBy = req.user.userId
-    req.body.creatorName = req.user.userName
     const place = await Place.create(req.body)
-    res.status(201).json({ place })
+    res.status(201).json(place)
   } catch (error) {
     next(error)
   }
@@ -19,7 +17,7 @@ const addNewPlace = async (req, res, next) => {
 const getAllPlaces = async (req, res, next) => {
   try {
     const allPlaces = await Place.find({})
-    res.status(200).json({ allPlaces })
+    res.status(200).json(allPlaces)
   } catch (error) {
     next(error)
   }

@@ -17,15 +17,11 @@ const PlaceSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Please provide a description'],
   },
-  creatorName: {
-    type: String,
-    required: [true, 'Please provide a user name'],
-  },
-  createdBy: {
-    type: mongoose.Types.ObjectId,
-    ref: 'User',
-    required: [true, 'Please provide a user'],
-  },
+  // createdBy: {
+  //   type: mongoose.Types.ObjectId,
+  //   ref: 'User',
+  //   required: [true, 'Please provide a user'],
+  // },
 })
 
 export default mongoose.model('Place', PlaceSchema)
