@@ -1,5 +1,5 @@
 import React, { useReducer, useContext } from 'react'
-import Cookies from 'js-cookie'
+import { useNavigate } from 'react-router-dom'
 import { useQuery, useMutation } from 'react-query'
 import reducer from './reducer'
 import {
@@ -23,7 +23,7 @@ const initialState = {
 }
 export const MainContextProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState)
-
+  const navigate = useNavigate()
   const displayAlert = () => {
     dispatch({ type: DISPLAY_ALERT })
     clearAlert()
@@ -40,7 +40,7 @@ export const MainContextProvider = ({ children }) => {
   const toggleIsRegistered = () => {
     dispatch({ type: TOGGLE_IS_REGISTERED })
   }
-
+  //logout user mutation
   const { mutate: logoutUser } = useMutation(logout, {
     onSuccess: () => {
       dispatch({
@@ -48,10 +48,11 @@ export const MainContextProvider = ({ children }) => {
         payload: { msg: 'Logged out successfully' },
       })
       clearAlert()
+      navigate('/')
     },
   })
-
-  const { isLoading: isGettingUser } = useQuery('user', getUser, {
+  //get user from token on page reload
+  useQuery('user', getUser, {
     staleTime: 1000 * 60 * 5,
     retry: 0,
     refetchOnWindowFocus: !!state.user,

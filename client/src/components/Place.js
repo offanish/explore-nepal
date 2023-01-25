@@ -11,7 +11,7 @@ const Place = ({ name, location, description, image, id }) => {
   return (
     <Wrapper onClick={handleClick}>
       <img
-        className="image"
+        className='image'
         src={image}
         alt={name}
         onError={(event) => {
@@ -19,13 +19,13 @@ const Place = ({ name, location, description, image, id }) => {
           event.onError = null
         }}
       />
-      <div className="place-details">
-        <div className="place-details-text">
+      <div className='place-details'>
+        <div className='place-details-text'>
           <h2>{name}</h2>
           <p>{description}</p>
-          <div className="place-bottom">
-            <div className="location">
-              <i className="fa-solid fa-location-dot"></i>
+          <div className='place-bottom'>
+            <div className='location'>
+              <i className='fa-solid fa-location-dot'></i>
               <span>{location}</span>
             </div>
           </div>

@@ -58,12 +58,20 @@ const Wrapper = styled.article`
     margin-right: 0.2rem;
     color: #cd4826;
   }
+  .fa-user {
+    color: #3cb6d4;
+  }
   .buttons-container {
     padding: 0.5rem;
     display: flex;
     align-items: flex-end;
     flex-direction: column;
     gap: 0.5rem;
+  }
+  .place-owner {
+    color: #4a4a4a;
+    font-size: 0.9rem;
+    font-weight: 500;
   }
   @media (max-width: 550px) {
     .place-details {

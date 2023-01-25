@@ -10,9 +10,9 @@ import {
   editPlace,
 } from '../controllers/placeControllers.js'
 
-router.post('/', addNewPlace)
+router.post('/', authenticateUser, addNewPlace)
 router.get('/', getAllPlaces)
-router.patch('/:id', editPlace)
-router.delete('/:id', deletePlace)
+router.patch('/:id', authenticateUser, editPlace)
+router.delete('/:id', authenticateUser, deletePlace)
 
 export default router

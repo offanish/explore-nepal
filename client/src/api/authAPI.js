@@ -6,6 +6,10 @@ export async function getUser() {
   })
   return data
 }
+export async function getPlaceOwner(ownerId) {
+  const { data } = await axios.get(`/api/auth/user/${ownerId}`)
+  return data.user
+}
 export async function loginUser(user) {
   const { data } = await axios.post('/api/auth/login', user)
   return data

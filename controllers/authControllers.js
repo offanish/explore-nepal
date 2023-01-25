@@ -12,6 +12,18 @@ const getUser = async (req, res, next) => {
   }
 }
 
+const getPlaceOwner = async (req, res, next) => {
+  try {
+    const { id } = req.params
+    const user = await User.findOne({ _id: id })
+    user.email = undefined
+    user.password = undefined
+    res.status(200).json({ user })
+  } catch (error) {
+    next(error)
+  }
+}
+
 const register = async (req, res, next) => {
   try {
     const { name, email, password } = req.body
@@ -75,4 +87,4 @@ const logout = async (req, res, next) => {
   }
 }
 
-export { register, login, getUser, logout }
+export { register, login, getUser, logout, getPlaceOwner }

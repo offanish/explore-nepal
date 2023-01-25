@@ -105,62 +105,62 @@ const NewPlace = () => {
   return (
     <Wrapper>
       <h1>{isEditing ? 'Edit Place' : 'Add New Place'}</h1>
-      <form onSubmit={handleSubmit} className="form">
+      <form onSubmit={handleSubmit} className='form'>
         {showAlert && <Alert />}
-        <div className="form-row">
-          <label className="form-label" htmlFor="name">
+        <div className='form-row'>
+          <label className='form-label' htmlFor='name'>
             Name
           </label>
           <input
-            className="form-input"
-            type="text"
-            name="name"
+            className='form-input'
+            type='text'
+            name='name'
             value={values.name}
             onChange={handleChange}
           />
         </div>
-        <div className="form-row">
-          <label className="form-label" htmlFor="location">
+        <div className='form-row'>
+          <label className='form-label' htmlFor='location'>
             Location
           </label>
           <input
-            className="form-input"
-            type="text"
-            name="location"
+            className='form-input'
+            type='text'
+            name='location'
             value={values.location}
             onChange={handleChange}
           />
         </div>
-        <div className="form-row">
-          <label className="form-label" htmlFor="image">
+        <div className='form-row'>
+          <label className='form-label' htmlFor='image'>
             Image
           </label>
           <input
-            className="form-input"
-            type="text"
-            name="image"
+            className='form-input'
+            type='text'
+            name='image'
             value={values.image}
             onChange={handleChange}
           />
         </div>
-        <div className="form-row">
-          <label className="form-label" htmlFor="description">
+        <div className='form-row'>
+          <label className='form-label' htmlFor='description'>
             Description
           </label>
           <textarea
-            className="form-input description"
-            type="text"
-            name="description"
+            className='form-input description'
+            type='text'
+            name='description'
             value={values.description}
             onChange={handleChange}
           />
         </div>
         <button
           disabled={isLoading || isEditingLoading}
-          className="btn btn-block"
+          className='btn btn-block'
         >
           {isLoading || isEditingLoading ? (
-            <ClipLoader color="#ffffff" size="1rem" />
+            <ClipLoader color='#ffffff' size='1rem' />
           ) : (
             'Submit'
           )}
