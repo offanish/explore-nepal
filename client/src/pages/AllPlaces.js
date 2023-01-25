@@ -8,10 +8,13 @@ import { getAllPlaces } from '../api/placesAPI'
 import { GET_PLACES_ERROR } from '../context/actions'
 
 const AllPlaces = () => {
-  const { showAlert, dispatch } = useMainContext()
+  const { showAlert, dispatch, clearAlert } = useMainContext()
 
   const { data: allPlaces = [], isLoading } = useQuery('places', getAllPlaces, {
-    onError: () => dispatch({ type: GET_PLACES_ERROR }),
+    onError: () => {
+      dispatch({ type: GET_PLACES_ERROR })
+      clearAlert()
+    },
   })
 
   const places = allPlaces.map((place) => {

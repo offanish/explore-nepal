@@ -10,10 +10,9 @@ import {
   EDIT_PLACE_SUCCESS,
   EDIT_PLACE_ERROR,
   TOGGLE_IS_REGISTERED,
-  REGISTER_USER_BEGIN,
+  GET_USER,
   REGISTER_USER_SUCCESS,
   REGISTER_USER_ERROR,
-  LOGIN_USER_BEGIN,
   LOGIN_USER_SUCCESS,
   LOGIN_USER_ERROR,
   LOGOUT_USER,
@@ -107,48 +106,38 @@ const reducer = (state, action) => {
         ...state,
         isRegistered: !state.isRegistered,
       }
-    case REGISTER_USER_BEGIN:
+    case GET_USER:
       return {
         ...state,
-        isLoading: true,
+        user: action.payload.user,
       }
     case REGISTER_USER_SUCCESS:
       return {
         ...state,
-        isLoading: false,
         showAlert: true,
         alertType: 'success',
-        alertText: 'User Created Successfully. Redirecting...',
+        alertText: 'User Created Successfully',
         user: action.payload.user,
-        token: action.payload.token,
       }
     case REGISTER_USER_ERROR:
       return {
         ...state,
-        isLoading: false,
         showAlert: true,
         alertType: 'danger',
         alertText: action.payload.msg,
       }
-    case LOGIN_USER_BEGIN:
-      return {
-        ...state,
-        isLoading: true,
-      }
+
     case LOGIN_USER_SUCCESS:
       return {
         ...state,
-        isLoading: false,
         showAlert: true,
         alertType: 'success',
-        alertText: 'Logged In Successfully. Redirecting...',
+        alertText: 'Logged In Successfully',
         user: action.payload.user,
-        token: action.payload.token,
       }
     case LOGIN_USER_ERROR:
       return {
         ...state,
-        isLoading: false,
         showAlert: true,
         alertType: 'danger',
         alertText: action.payload.msg,
@@ -158,9 +147,8 @@ const reducer = (state, action) => {
         ...state,
         showAlert: true,
         alertType: 'success',
-        alertText: 'Logged Out Successfully',
+        alertText: action.payload.msg,
         user: null,
-        token: null,
       }
     default:
       return { ...state }

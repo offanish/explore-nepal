@@ -11,10 +11,10 @@ const queryClient = new QueryClient()
 
 const root = ReactDOM.createRoot(document.getElementById('root'))
 root.render(
-  <MainContextProvider>
-    <QueryClientProvider client={queryClient}>
+  <QueryClientProvider client={queryClient}>
+    <MainContextProvider>
       <App />
       <ReactQueryDevtools />
-    </QueryClientProvider>
-  </MainContextProvider>
+    </MainContextProvider>
+  </QueryClientProvider>
 )

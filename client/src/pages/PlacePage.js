@@ -32,7 +32,7 @@ const PlacePage = () => {
   )
 
   const { mutate: deletePlaceMutate, isLoading: isDeleting } = useMutation(
-    () => deletePlace(id, 'token'),
+    () => deletePlace(id),
     {
       onSuccess: () => {
         dispatch({ type: DELETE_PLACE_SUCCESS })

@@ -1,35 +1,25 @@
 import React, { useReducer, useContext } from 'react'
-import axios from 'axios'
+import Cookies from 'js-cookie'
+import { useQuery, useMutation } from 'react-query'
 import reducer from './reducer'
 import {
   DISPLAY_ALERT,
   CLEAR_ALERT,
   NAVIGATE_PAGE,
   TOGGLE_IS_REGISTERED,
-  REGISTER_USER_BEGIN,
-  REGISTER_USER_SUCCESS,
-  REGISTER_USER_ERROR,
-  LOGIN_USER_BEGIN,
-  LOGIN_USER_SUCCESS,
-  LOGIN_USER_ERROR,
   LOGOUT_USER,
+  GET_USER,
 } from './actions'
-
-const user = localStorage.getItem('user')
-const token = localStorage.getItem('token')
+import { getUser, logout } from '../api/authAPI'
 
 const MainContext = React.createContext()
 const initialState = {
   showAlert: false,
   alertType: '',
   alertText: '',
-  isLoading: false,
-  isEditing: false,
-  editingId: '',
   allPlaces: [],
   isRegistered: false,
-  token: token,
-  user: JSON.parse(user) || null,
+  user: null,
 }
 export const MainContextProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState)
@@ -51,54 +41,35 @@ export const MainContextProvider = ({ children }) => {
     dispatch({ type: TOGGLE_IS_REGISTERED })
   }
 
-  const addUserToLocalStorage = (user, token) => {
-    localStorage.setItem('user', JSON.stringify(user))
-    localStorage.setItem('token', token)
-  }
-
-  const removeUserFromLocalStorage = (user, token) => {
-    localStorage.removeItem('user')
-    localStorage.removeItem('token')
-  }
-
-  const registerUser = async (newUser, clearValues) => {
-    try {
-      dispatch({ type: REGISTER_USER_BEGIN })
-      const { data } = await axios.post('/api/auth/register', newUser)
-      const { user, token } = data
-      dispatch({ type: REGISTER_USER_SUCCESS, payload: { user, token } })
-      addUserToLocalStorage(user, token)
-      clearValues()
-    } catch (error) {
+  const { mutate: logoutUser } = useMutation(logout, {
+    onSuccess: () => {
       dispatch({
-        type: REGISTER_USER_ERROR,
-        payload: { msg: error.response.data.msg },
+        type: LOGOUT_USER,
+        payload: { msg: 'Logged out successfully' },
       })
-    }
-    clearAlert()
-  }
-  const loginUser = async (newUser, clearValues) => {
-    try {
-      dispatch({ type: LOGIN_USER_BEGIN })
-      const { data } = await axios.post('/api/auth/login', newUser)
-      const { user, token } = data
-      dispatch({ type: LOGIN_USER_SUCCESS, payload: { user, token } })
-      addUserToLocalStorage(user, token)
-      clearValues()
-    } catch (error) {
-      dispatch({
-        type: LOGIN_USER_ERROR,
-        payload: { msg: error.response.data.msg },
-      })
-    }
-    clearAlert()
-  }
-  const logoutUser = () => {
-    dispatch({ type: LOGOUT_USER })
-    removeUserFromLocalStorage()
-    clearAlert()
-  }
+      clearAlert()
+    },
+  })
 
+  const { isLoading: isGettingUser } = useQuery('user', getUser, {
+    staleTime: 1000 * 60 * 5,
+    retry: 0,
+    refetchOnWindowFocus: !!state.user,
+    refetchOnReconnect: false,
+    refetchOnMount: false,
+    onSuccess: (data) => {
+      dispatch({ type: GET_USER, payload: { user: data.user } })
+    },
+    onError: () => {
+      if (state.user) {
+        dispatch({
+          type: LOGOUT_USER,
+          payload: { msg: 'Login session expired' },
+        })
+        clearAlert()
+      }
+    },
+  })
   return (
     <MainContext.Provider
       value={{
@@ -108,8 +79,6 @@ export const MainContextProvider = ({ children }) => {
         clearAlert,
         navigatePage,
         toggleIsRegistered,
-        registerUser,
-        loginUser,
         logoutUser,
       }}
     >

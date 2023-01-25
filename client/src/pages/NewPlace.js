@@ -40,7 +40,7 @@ const NewPlace = () => {
   }
   //create place mutation
   const { mutate: createPlaceMutation, isLoading } = useMutation(
-    (values) => createNewPlace(values, 'abcde'),
+    (values) => createNewPlace(values),
     {
       onSuccess: (data) => {
         queryClient.invalidateQueries('places')
@@ -60,7 +60,7 @@ const NewPlace = () => {
   )
   //edit place mutation
   const { mutate: editPlaceMutation, isLoading: isEditingLoading } =
-    useMutation((values) => editPlace(values, editId, 'abcde'), {
+    useMutation((values) => editPlace(values, editId), {
       onSuccess: (data) => {
         queryClient.invalidateQueries('places')
         clearValues()

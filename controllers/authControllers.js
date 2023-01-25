@@ -1,6 +1,17 @@
 import ExpressError from '../errors/ExpressError.js'
 import User from '../models/User.js'
 
+const getUser = async (req, res, next) => {
+  try {
+    const { userId } = req.user
+    const user = await User.findOne({ _id: userId })
+    user.password = undefined
+    res.status(200).json({ user })
+  } catch (error) {
+    next(error)
+  }
+}
+
 const register = async (req, res, next) => {
   try {
     const { name, email, password } = req.body
@@ -14,7 +25,13 @@ const register = async (req, res, next) => {
     const user = await User.create(req.body)
     const token = user.createJWT()
     user.password = undefined
-    res.status(201).json({ user, token })
+    res
+      .status(201)
+      .cookie('token', `Bearer ${token}`, {
+        httpOnly: true,
+        maxAge: 1000 * 60 * 5,
+      })
+      .json({ user })
   } catch (error) {
     next(error)
   }
@@ -36,10 +53,26 @@ const login = async (req, res, next) => {
     }
     const token = user.createJWT()
     user.password = undefined
-    res.status(200).json({ user, token })
+    res
+      .status(200)
+      .cookie('token', `Bearer ${token}`, {
+        httpOnly: true,
+        maxAge: 1000 * 60 * 5,
+      })
+      .json({ user })
+  } catch (error) {
+    next(error)
+  }
+}
+const logout = async (req, res, next) => {
+  try {
+    res
+      .clearCookie('token', { httpOnly: true })
+      .status(200)
+      .json({ msg: 'logged out successfully' })
   } catch (error) {
     next(error)
   }
 }
 
-export { register, login }
+export { register, login, getUser, logout }

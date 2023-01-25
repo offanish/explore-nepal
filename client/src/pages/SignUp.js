@@ -1,8 +1,17 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import Wrapper from '../assets/wrappers/NewPlace'
-import Alert from '../components/Alert'
+import { useMutation } from 'react-query'
+import ClipLoader from 'react-spinners/ClipLoader'
+
 import { useMainContext } from '../context/MainContext'
+import Alert from '../components/Alert'
+import Wrapper from '../assets/wrappers/NewPlace'
+import { loginUser, registerUser } from '../api/authAPI'
+import {
+  LOGIN_USER_ERROR,
+  LOGIN_USER_SUCCESS,
+  REGISTER_USER_SUCCESS,
+} from '../context/actions'
 
 const initialValues = {
   name: '',
@@ -14,12 +23,11 @@ const SignUp = () => {
   const {
     isRegistered,
     showAlert,
-    isLoading,
     displayAlert,
     toggleIsRegistered,
-    registerUser,
-    loginUser,
     user,
+    dispatch,
+    clearAlert,
   } = useMainContext()
 
   const navigate = useNavigate()
@@ -29,6 +37,46 @@ const SignUp = () => {
   const clearValues = () => {
     setValues(initialValues)
   }
+  const handleChange = (event) => {
+    setValues({
+      ...values,
+      [event.target.name]: event.target.value,
+    })
+  }
+  //login user mutation
+  const { mutate: loginUserMutation, isLoading: isLoggingIn } = useMutation(
+    (user) => loginUser(user),
+    {
+      onSuccess: (data) => {
+        dispatch({ type: LOGIN_USER_SUCCESS, payload: { user: data.user } })
+        navigate('/places')
+        clearAlert()
+      },
+      onError: (error) => {
+        dispatch({
+          type: LOGIN_USER_ERROR,
+          payload: { msg: error.response.data.msg },
+        })
+        clearAlert()
+      },
+    }
+  )
+  //register user mutation
+  const { mutate: registerUserMutation, isLoading: isRegistering } =
+    useMutation((user) => registerUser(user), {
+      onSuccess: (data) => {
+        dispatch({ type: REGISTER_USER_SUCCESS, payload: { user: data.user } })
+        navigate('/places')
+        clearAlert()
+      },
+      onError: (error) => {
+        dispatch({
+          type: LOGIN_USER_ERROR,
+          payload: { msg: error.response.data.msg },
+        })
+        clearAlert()
+      },
+    })
 
   const handleSubmit = (event) => {
     event.preventDefault()
@@ -37,26 +85,12 @@ const SignUp = () => {
       return displayAlert()
     }
     if (!isRegistered) {
-      return registerUser(values, clearValues)
+      return registerUserMutation(values)
     }
     if (isRegistered) {
-      return loginUser(values, clearValues)
+      return loginUserMutation(values)
     }
   }
-  const handleChange = (event) => {
-    setValues({
-      ...values,
-      [event.target.name]: event.target.value,
-    })
-  }
-
-  useEffect(() => {
-    if (user) {
-      setTimeout(() => {
-        navigate('/places')
-      }, 3000)
-    }
-  })
 
   return (
     <Wrapper signUp>
@@ -116,8 +150,17 @@ const SignUp = () => {
             </button>
           }
         </p>
-        <button disabled={isLoading} className="btn btn-block">
-          {isRegistered ? 'Sign In' : 'Sign Up'}
+        <button
+          disabled={isLoggingIn || isRegistering}
+          className="btn btn-block"
+        >
+          {isLoggingIn || isRegistering ? (
+            <ClipLoader color="#ffffff" size="1rem" />
+          ) : isRegistered ? (
+            'Sign In'
+          ) : (
+            'Sign Up'
+          )}
         </button>
       </form>
     </Wrapper>
