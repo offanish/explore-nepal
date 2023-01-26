@@ -9,10 +9,12 @@ import {
   getPlaceOwner,
   getUser,
   logout,
+  getUserPlaces,
 } from '../controllers/authControllers.js'
 
 router.get('/user', authenticateUser, getUser)
 router.get('/user/:id', getPlaceOwner)
+router.get('/user/:id/places', getUserPlaces)
 router.post('/register', register)
 router.post('/login', login)
 router.post('/logout', logout)

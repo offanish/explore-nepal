@@ -10,6 +10,10 @@ export async function getPlaceOwner(ownerId) {
   const { data } = await axios.get(`/api/auth/user/${ownerId}`)
   return data.user
 }
+export async function getUserPlaces(userId) {
+  const { data } = await axios.get(`/api/auth/user/${userId}/places`)
+  return data.places
+}
 export async function loginUser(user) {
   const { data } = await axios.post('/api/auth/login', user)
   return data

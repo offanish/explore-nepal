@@ -19,9 +19,9 @@ const Navbar = () => {
   return (
     <Wrapper toggleState={toggled}>
       <Logo />
-      <div className="nav-links">
+      <div className='nav-links'>
         <NavLink
-          to="/places"
+          to='/places'
           end
           className={({ isActive }) =>
             isActive ? 'nav-link active' : 'nav-link'
@@ -31,7 +31,7 @@ const Navbar = () => {
           All Places
         </NavLink>
         <NavLink
-          to="/places/new"
+          to='/places/new'
           className={({ isActive }) =>
             isActive ? 'nav-link active' : 'nav-link'
           }
@@ -40,25 +40,33 @@ const Navbar = () => {
           New Place
         </NavLink>
       </div>
-      <div className="navbar-btn">
+      <div className='navbar-btn'>
         {user ? (
           <>
             <button
-              className="btn profile-btn"
+              className='btn profile-btn'
               onClick={() => setShowDropdown(!showDropdown)}
             >
-              <div className="profile-btn-group">
+              <div className='profile-btn-group'>
                 <span>{user.name.split(' ')[0]}</span>
-                <i className="fa-sharp fa-solid fa-caret-down"></i>
+                <i className='fa-sharp fa-solid fa-caret-down'></i>
               </div>
             </button>
             <div
               className={showDropdown ? 'dropdown show-dropdown' : 'dropdown'}
             >
-              <Link className="dropdown-links">Profile</Link>
-              <div className="border"></div>
               <Link
-                className="dropdown-links"
+                className='dropdown-links'
+                to='/profile'
+                onClick={() => {
+                  setShowDropdown(false)
+                }}
+              >
+                Profile
+              </Link>
+              <div className='border'></div>
+              <Link
+                className='dropdown-links'
                 onClick={() => {
                   setShowDropdown(false)
                   logoutUser()
@@ -70,7 +78,7 @@ const Navbar = () => {
           </>
         ) : (
           <button
-            className="btn"
+            className='btn'
             onClick={() => {
               navigate()
               navigateRouter('/sign-up')
@@ -80,7 +88,7 @@ const Navbar = () => {
           </button>
         )}
       </div>
-      <i className="fa-solid fa-bars" onClick={handleClick}></i>
+      <i className='fa-solid fa-bars' onClick={handleClick}></i>
     </Wrapper>
   )
 }

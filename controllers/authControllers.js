@@ -1,5 +1,6 @@
 import ExpressError from '../errors/ExpressError.js'
 import User from '../models/User.js'
+import Place from '../models/Place.js'
 
 const getUser = async (req, res, next) => {
   try {
@@ -19,6 +20,18 @@ const getPlaceOwner = async (req, res, next) => {
     user.email = undefined
     user.password = undefined
     res.status(200).json({ user })
+  } catch (error) {
+    next(error)
+  }
+}
+const getUserPlaces = async (req, res, next) => {
+  try {
+    const { id } = req.params
+    const places = await Place.find({ createdBy: id })
+    if (!places) {
+      throw new ExpressError(404, 'Places not found')
+    }
+    res.status(200).json({ places })
   } catch (error) {
     next(error)
   }
@@ -87,4 +100,4 @@ const logout = async (req, res, next) => {
   }
 }
 
-export { register, login, getUser, logout, getPlaceOwner }
+export { register, login, getUser, logout, getPlaceOwner, getUserPlaces }

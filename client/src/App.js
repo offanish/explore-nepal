@@ -8,6 +8,7 @@ import Home from './pages/Home'
 import PageLayout from './components/PageLayout'
 
 import { Route, Routes } from 'react-router-dom'
+import Profile from './pages/Profile'
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
           <Route path='new' element={<NewPlace />} />
           <Route path=':id' element={<PlacePage />} />
         </Route>
+        <Route path='profile' element={<Profile />} />
         <Route path='sign-up' element={<SignUp />} />
       </Route>
       <Route path='*' element={<h1>Page Doesn't exist</h1>} />
