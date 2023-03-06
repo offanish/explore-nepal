@@ -59,6 +59,7 @@ export const MainContextProvider = ({ children }) => {
     refetchOnReconnect: false,
     refetchOnMount: false,
     onSuccess: (data) => {
+      x
       dispatch({ type: GET_USER, payload: { user: data.user } })
     },
     onError: () => {
