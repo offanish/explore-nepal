@@ -1,68 +1,41 @@
 import { Link, useParams, useNavigate } from 'react-router-dom'
-import { useMemo } from 'react'
-import { useMutation, useQuery } from 'react-query'
-
+import { useDispatch, useSelector } from 'react-redux'
 import notFoundImage from '../assets/images/not-found-image.jpg'
 import Wrapper from '../assets/wrappers/Place'
-
-import { useMainContext } from '../context/MainContext'
-import {
-  GET_PLACES_ERROR,
-  DELETE_PLACE_SUCCESS,
-  DELETE_PLACE_ERROR,
-} from '../context/actions'
-
 import Alert from '../components/Alert'
 import Loading from '../components/Loading'
-
-import { getAllPlaces, deletePlace } from '../api/placesAPI'
-import { getPlaceOwner } from '../api/authAPI'
+import { useDeletePlaceMutation, useGetPlaceByIdQuery } from '../state/apiSlice'
+import { displayAlertThunk } from '../state/globalSlice'
 
 const PlacePage = () => {
   const { id } = useParams()
-  const { user, showAlert, clearAlert, dispatch } = useMainContext()
   const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const { user, showAlert } = useSelector((state) => state.global)
 
-  const { data: allPlaces = [], isLoading } = useQuery('places', getAllPlaces, {
-    onError: () => dispatch({ type: GET_PLACES_ERROR }),
-  })
-
-  const currentPlace = useMemo(
-    () => allPlaces.find((place) => place._id === id),
-    [allPlaces, id]
-  )
-
-  const { data: placeOwner } = useQuery(
-    ['user', currentPlace?.createdBy],
-    () => getPlaceOwner(currentPlace.createdBy),
-    {
-      enabled: !!currentPlace,
-    }
-  )
-
-  const { mutate: deletePlaceMutate, isLoading: isDeleting } = useMutation(
-    () => deletePlace(id),
-    {
-      onSuccess: () => {
-        dispatch({ type: DELETE_PLACE_SUCCESS })
-        navigate('/places')
-        clearAlert()
-      },
-      onError: (error) => {
-        dispatch({
-          type: DELETE_PLACE_ERROR,
-          payload: { msg: error.response.data.msg },
-        })
-        clearAlert()
-      },
-    }
-  )
+  const { data: place, isLoading } = useGetPlaceByIdQuery(id)
+  const [deletePlace] = useDeletePlaceMutation()
 
   const handleDeletePlace = () => {
-    deletePlaceMutate()
+    deletePlace(place._id)
+      .unwrap()
+      .then(() => {
+        navigate('/places')
+        dispatch(
+          displayAlertThunk({
+            alertType: 'success',
+            alertText: 'Deleted Place Successfully',
+          })
+        )
+      })
+      .catch((error) => {
+        dispatch(
+          displayAlertThunk({ alertType: 'danger', alertText: error.data.msg })
+        )
+      })
   }
 
-  if (!currentPlace || isLoading || isDeleting) {
+  if (!place || isLoading) {
     return <Loading />
   }
   return (
@@ -71,8 +44,8 @@ const PlacePage = () => {
       <Wrapper placePage>
         <img
           className='image image-full'
-          src={currentPlace.image}
-          alt={currentPlace.name}
+          src={place.image}
+          alt={place.name}
           onError={(event) => {
             event.target.src = notFoundImage
             event.onError = null
@@ -80,24 +53,24 @@ const PlacePage = () => {
         />
         <div className='place-details'>
           <div className='place-details-text'>
-            <h2>{currentPlace.name}</h2>
-            <p className={'description-full'}>{currentPlace.description}</p>
+            <h2>{place.name}</h2>
+            <p className={'description-full'}>{place.description}</p>
             <span>
               <i className='fa-solid fa-user'></i>
-              <span className='place-owner'>{placeOwner?.name || ' '}</span>
+              <span className='place-owner'>{place.createdBy.name}</span>
             </span>
             <div className='place-bottom'>
               <div className='location'>
                 <i className='fa-solid fa-location-dot'></i>
-                <span>{currentPlace.location}</span>
+                <span>{place.location}</span>
               </div>
             </div>
           </div>
-          {user && user._id === currentPlace.createdBy && (
+          {user && user._id === place.createdBy._id && (
             <div className='buttons-container'>
               <Link
                 to='/places/new'
-                state={{ isEditing: true, currentPlace }}
+                state={{ isEditing: true, place }}
                 className='btn btn-edit'
               >
                 Edit

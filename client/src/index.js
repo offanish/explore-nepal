@@ -3,21 +3,17 @@ import ReactDOM from 'react-dom/client'
 
 import './index.css'
 import App from './App'
-import { BrowserRouter } from 'react-router-dom'
-import { MainContextProvider } from './context/MainContext'
-import { QueryClient, QueryClientProvider } from 'react-query'
-import { ReactQueryDevtools } from 'react-query/devtools'
 
-const queryClient = new QueryClient()
+import { Provider } from 'react-redux'
+import store from './state/store'
+
+import { BrowserRouter } from 'react-router-dom'
 
 const root = ReactDOM.createRoot(document.getElementById('root'))
 root.render(
-  <QueryClientProvider client={queryClient}>
+  <Provider store={store}>
     <BrowserRouter>
-      <MainContextProvider>
-        <App />
-        <ReactQueryDevtools />
-      </MainContextProvider>
+      <App />
     </BrowserRouter>
-  </QueryClientProvider>
+  </Provider>
 )

@@ -1,20 +1,18 @@
 import { useState } from 'react'
-import { useNavigate, NavLink, Link } from 'react-router-dom'
+import { NavLink, Link } from 'react-router-dom'
 import Wrapper from '../assets/wrappers/Navbar'
-import { useMutation } from 'react-query'
 import Logo from './Logo'
-import { useMainContext } from '../context/MainContext'
+import { useSelector, useDispatch } from 'react-redux'
+import { displayAlertThunk, logout } from '../state/globalSlice'
 
 const Navbar = () => {
-  const { navigatePage, user, logoutUser } = useMainContext()
+  const dispatch = useDispatch()
+  const { user } = useSelector((state) => state.global)
+
   const [toggled, setToggled] = useState(false)
   const [showDropdown, setShowDropdown] = useState(false)
-  const navigateRouter = useNavigate()
   const handleClick = () => {
     setToggled(!toggled)
-  }
-  const navigate = () => {
-    navigatePage()
   }
   return (
     <Wrapper toggleState={toggled}>
@@ -26,7 +24,7 @@ const Navbar = () => {
           className={({ isActive }) =>
             isActive ? 'nav-link active' : 'nav-link'
           }
-          onClick={navigate}
+          onClick={() => setShowDropdown(false)}
         >
           All Places
         </NavLink>
@@ -35,7 +33,7 @@ const Navbar = () => {
           className={({ isActive }) =>
             isActive ? 'nav-link active' : 'nav-link'
           }
-          onClick={navigate}
+          onClick={() => setShowDropdown(false)}
         >
           New Place
         </NavLink>
@@ -69,7 +67,13 @@ const Navbar = () => {
                 className='dropdown-links'
                 onClick={() => {
                   setShowDropdown(false)
-                  logoutUser()
+                  dispatch(logout())
+                  dispatch(
+                    displayAlertThunk({
+                      alertType: 'success',
+                      alertText: 'Logged Out Successfully',
+                    })
+                  )
                 }}
               >
                 Logout
@@ -77,15 +81,9 @@ const Navbar = () => {
             </div>
           </>
         ) : (
-          <button
-            className='btn'
-            onClick={() => {
-              navigate()
-              navigateRouter('/sign-up')
-            }}
-          >
+          <Link className='btn' to='/sign-up'>
             Sign In
-          </button>
+          </Link>
         )}
       </div>
       <i className='fa-solid fa-bars' onClick={handleClick}></i>

@@ -1,17 +1,13 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useMutation } from 'react-query'
+import { useDispatch, useSelector } from 'react-redux'
 import ClipLoader from 'react-spinners/ClipLoader'
 
-import { useMainContext } from '../context/MainContext'
 import Alert from '../components/Alert'
 import Wrapper from '../assets/wrappers/NewPlace'
-import { loginUser, registerUser } from '../api/authAPI'
-import {
-  LOGIN_USER_ERROR,
-  LOGIN_USER_SUCCESS,
-  REGISTER_USER_SUCCESS,
-} from '../context/actions'
+
+import { useLoginMutation, useRegisterMutation } from '../state/apiSlice'
+import { displayAlertThunk, setUser } from '../state/globalSlice'
 
 const initialValues = {
   name: '',
@@ -20,19 +16,12 @@ const initialValues = {
 }
 
 const SignUp = () => {
-  const {
-    isRegistered,
-    showAlert,
-    displayAlert,
-    toggleIsRegistered,
-    user,
-    dispatch,
-    clearAlert,
-  } = useMainContext()
-
+  const dispatch = useDispatch()
   const navigate = useNavigate()
+  const { showAlert, user } = useSelector((state) => state.global)
 
   const [values, setValues] = useState(initialValues)
+  const [isRegistered, setIsRegistered] = useState(true)
 
   const clearValues = () => {
     setValues(initialValues)
@@ -43,94 +32,115 @@ const SignUp = () => {
       [event.target.name]: event.target.value,
     })
   }
-  //login user mutation
-  const { mutate: loginUserMutation, isLoading: isLoggingIn } = useMutation(
-    (user) => loginUser(user),
-    {
-      onSuccess: (data) => {
-        dispatch({ type: LOGIN_USER_SUCCESS, payload: { user: data.user } })
-        navigate('/places')
-        clearAlert()
-      },
-      onError: (error) => {
-        dispatch({
-          type: LOGIN_USER_ERROR,
-          payload: { msg: error.response.data.msg },
-        })
-        clearAlert()
-      },
+
+  useEffect(() => {
+    if (user) {
+      navigate('/places')
     }
-  )
-  //register user mutation
-  const { mutate: registerUserMutation, isLoading: isRegistering } =
-    useMutation((user) => registerUser(user), {
-      onSuccess: (data) => {
-        dispatch({ type: REGISTER_USER_SUCCESS, payload: { user: data.user } })
-        navigate('/places')
-        clearAlert()
-      },
-      onError: (error) => {
-        dispatch({
-          type: LOGIN_USER_ERROR,
-          payload: { msg: error.response.data.msg },
-        })
-        clearAlert()
-      },
-    })
+  }, [user, navigate])
+
+  const [login, { isLoading: isLoggingIn }] = useLoginMutation()
+  const [register, { isLoading: isRegistering }] = useRegisterMutation()
 
   const handleSubmit = (event) => {
     event.preventDefault()
     const { name, email, password } = values
     if (!email || !password || (!isRegistered && !name)) {
-      return displayAlert()
+      dispatch(
+        displayAlertThunk({
+          alertText: 'Please fill the required fields',
+          alertType: 'danger',
+        })
+      )
+      return
     }
     if (!isRegistered) {
-      return registerUserMutation(values)
+      register(values)
+        .unwrap()
+        .then((data) => {
+          dispatch(setUser(data))
+          dispatch(
+            displayAlertThunk({
+              alertText: 'Registered Successfully',
+              alertType: 'success',
+            })
+          )
+          navigate('/')
+        })
+        .catch((error) => {
+          dispatch(
+            displayAlertThunk({
+              alertText: error.data.msg,
+              alertType: 'danger',
+            })
+          )
+        })
+      return
     }
     if (isRegistered) {
-      return loginUserMutation(values)
+      login(values)
+        .unwrap()
+        .then((data) => {
+          dispatch(setUser(data))
+          dispatch(
+            displayAlertThunk({
+              alertText: 'Logged In Successfully',
+              alertType: 'success',
+            })
+          )
+          navigate('/')
+        })
+        .catch((error) => {
+          dispatch(
+            displayAlertThunk({
+              alertText: error.data.msg,
+              alertType: 'danger',
+            })
+          )
+        })
+      return
     }
   }
 
   return (
     <Wrapper signUp>
       <h1>{isRegistered ? 'Sign In' : 'Sign Up'}</h1>
-      <form onSubmit={handleSubmit} className="form">
+      <form onSubmit={handleSubmit} className='form'>
         {showAlert && <Alert />}
         {!isRegistered && (
-          <div className="form-row">
-            <label className="form-label" htmlFor="name">
+          <div className='form-row'>
+            <label className='form-label' htmlFor='name'>
               Name
             </label>
             <input
-              className="form-input"
-              type="text"
-              name="name"
+              className='form-input'
+              type='text'
+              name='name'
               value={values.name}
               onChange={handleChange}
             />
           </div>
         )}
-        <div className="form-row">
-          <label className="form-label" htmlFor="email">
+        <div className='form-row'>
+          <label className='form-label' htmlFor='email'>
             Email
           </label>
           <input
-            className="form-input"
-            type="text"
-            name="email"
+            className='form-input'
+            type='text'
+            name='email'
             value={values.email}
             onChange={handleChange}
           />
         </div>
-        <div className="form-row">
-          <label className="form-label" htmlFor="password">
+        <div className='form-row'>
+          <label className='form-label' htmlFor='password'>
             Password
           </label>
           <input
-            className="form-input"
-            type="password"
-            name="password"
+            className='form-input'
+            type='password'
+            name='password'
             value={values.password}
             onChange={handleChange}
           />
@@ -139,12 +149,12 @@ const SignUp = () => {
           {isRegistered ? 'Already registered?' : 'Not registered yet?'}
           {
             <button
-              type="button"
+              type='button'
               onClick={() => {
-                toggleIsRegistered()
+                setIsRegistered(!isRegistered)
                 clearValues()
               }}
-              className="registered-btn"
+              className='registered-btn'
             >
               {isRegistered ? 'Sign Up' : 'Sign In'}
             </button>
@@ -152,10 +162,10 @@ const SignUp = () => {
         </p>
         <button
           disabled={isLoggingIn || isRegistering}
-          className="btn btn-block"
+          className='btn btn-block'
         >
           {isLoggingIn || isRegistering ? (
-            <ClipLoader color="#ffffff" size="1rem" />
+            <ClipLoader color='#ffffff' size='1rem' />
           ) : isRegistered ? (
             'Sign In'
           ) : (

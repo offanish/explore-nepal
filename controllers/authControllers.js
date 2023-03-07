@@ -50,13 +50,7 @@ const register = async (req, res, next) => {
     const user = await User.create(req.body)
     const token = user.createJWT()
     user.password = undefined
-    res
-      .status(201)
-      .cookie('token', `Bearer ${token}`, {
-        httpOnly: true,
-        maxAge: 1000 * 60 * 5,
-      })
-      .json({ user })
+    res.status(201).json({ user, token })
   } catch (error) {
     next(error)
   }
@@ -78,13 +72,7 @@ const login = async (req, res, next) => {
     }
     const token = user.createJWT()
     user.password = undefined
-    res
-      .status(200)
-      .cookie('token', `Bearer ${token}`, {
-        httpOnly: true,
-        maxAge: 1000 * 60 * 5,
-      })
-      .json({ user })
+    res.status(200).json({ user, token })
   } catch (error) {
     next(error)
   }

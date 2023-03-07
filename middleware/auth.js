@@ -3,7 +3,7 @@ import ExpressError from '../errors/ExpressError.js'
 
 const auth = (req, res, next) => {
   try {
-    const fullToken = req.cookies.token
+    const fullToken = req.headers.authorization
     if (!fullToken || !fullToken.startsWith('Bearer')) {
       throw new ExpressError(401, 'User must be Signed In')
     }

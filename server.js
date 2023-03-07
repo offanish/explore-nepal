@@ -4,7 +4,6 @@ dotenv.config()
 
 import express from 'express'
 const app = express()
-import cookieParser from 'cookie-parser'
 import morgan from 'morgan'
 import connectDB from './db/connect.js'
 
@@ -16,7 +15,6 @@ import authRouter from './routes/authRoutes.js'
 import notFoundMiddleware from './middleware/notFound.js'
 import errorHandlerMiddleware from './middleware/errorHandler.js'
 
-app.use(cookieParser())
 app.use(express.json())
 
 if (process.env.NODE_ENV !== 'production') {

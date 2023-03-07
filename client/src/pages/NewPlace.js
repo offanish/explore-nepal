@@ -1,30 +1,23 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { useMutation, useQueryClient } from 'react-query'
+import { useDispatch, useSelector } from 'react-redux'
 import ClipLoader from 'react-spinners/ClipLoader'
-
-import { useMainContext } from '../context/MainContext'
-import {
-  CREATE_PLACE_ERROR,
-  CREATE_PLACE_SUCCESS,
-  EDIT_PLACE_SUCCESS,
-  EDIT_PLACE_ERROR,
-} from '../context/actions'
-
+import { useCreatePlaceMutation, useEditPlaceMutation } from '../state/apiSlice'
+import { displayAlertThunk } from '../state/globalSlice'
 import Wrapper from '../assets/wrappers/NewPlace'
 import Alert from '../components/Alert'
-import { createNewPlace, editPlace } from '../api/placesAPI'
 
 const initialValues = { name: '', location: '', image: '', description: '' }
 
 const NewPlace = () => {
-  const { showAlert, displayAlert, dispatch, clearAlert } = useMainContext()
-  const queryClient = useQueryClient()
+  const dispatch = useDispatch()
+  const { showAlert } = useSelector((state) => state.global)
+
   const navigate = useNavigate()
 
   const location = useLocation()
   const isEditing = location.state?.isEditing
-  const currentPlace = location.state?.currentPlace
+  const currentPlace = location.state?.place
   const editId = currentPlace?._id
 
   const [values, setValues] = useState(initialValues)
@@ -38,45 +31,7 @@ const NewPlace = () => {
   const clearValues = () => {
     setValues(initialValues)
   }
-  //create place mutation
-  const { mutate: createPlaceMutation, isLoading } = useMutation(
-    (values) => createNewPlace(values),
-    {
-      onSuccess: (data) => {
-        queryClient.invalidateQueries('places')
-        clearValues()
-        dispatch({ type: CREATE_PLACE_SUCCESS })
-        navigate(`/places/${data._id}`)
-        clearAlert()
-      },
-      onError: (error) => {
-        dispatch({
-          type: CREATE_PLACE_ERROR,
-          payload: { msg: error.response.data.msg },
-        })
-        clearAlert()
-      },
-    }
-  )
-  //edit place mutation
-  const { mutate: editPlaceMutation, isLoading: isEditingLoading } =
-    useMutation((values) => editPlace(values, editId), {
-      onSuccess: (data) => {
-        queryClient.invalidateQueries('places')
-        clearValues()
-        dispatch({ type: EDIT_PLACE_SUCCESS })
-        navigate(`/places/${currentPlace._id}`)
-        clearAlert()
-      },
-      onError: (error) => {
-        dispatch({
-          type: EDIT_PLACE_ERROR,
-          payload: { msg: error.response.data.msg },
-        })
-        clearAlert()
-      },
-    })
-  //set initial values while editing
+
   useEffect(() => {
     if (isEditing) {
       setValues({
@@ -86,20 +41,69 @@ const NewPlace = () => {
         description: currentPlace?.description,
       })
     }
-  }, [])
+  }, [
+    currentPlace?.description,
+    currentPlace?.image,
+    currentPlace?.location,
+    currentPlace?.name,
+    isEditing,
+  ])
+
+  const [createPlace, { isLoading }] = useCreatePlaceMutation()
+  const [editPlace, { isLoading: isEditingLoading }] = useEditPlaceMutation()
 
   const handleSubmit = (event) => {
     event.preventDefault()
     const { name, location, image, description } = values
     if (!name || !location || !image || !description) {
-      displayAlert()
+      dispatch(
+        displayAlertThunk({
+          alertText: 'Please fill all required fields',
+          alertType: 'danger',
+        })
+      )
       return
     }
     if (isEditing) {
-      editPlaceMutation(values)
+      editPlace({ editId, values })
+        .unwrap()
+        .then((data) => {
+          dispatch(
+            displayAlertThunk({
+              alertText: 'Edited Place Successfully',
+              alertType: 'success',
+            })
+          )
+          navigate(`/places/${currentPlace._id}`)
+          clearValues()
+        })
+        .catch((error) => {
+          dispatch(
+            displayAlertThunk({
+              alertText: error.data.msg,
+              alertType: 'danger',
+            })
+          )
+        })
       return
     }
-    createPlaceMutation(values)
+    createPlace(values)
+      .unwrap()
+      .then((data) => {
+        dispatch(
+          displayAlertThunk({
+            alertText: 'Place Created Successfully',
+            alertType: 'success',
+          })
+        )
+        navigate(`/places/${data._id}`)
+        clearValues()
+      })
+      .catch((error) => {
+        dispatch(
+          displayAlertThunk({ alertText: error.data.msg, alertType: 'danger' })
+        )
+      })
   }
 
   return (

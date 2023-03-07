@@ -2,6 +2,27 @@ import Place from '../models/Place.js'
 import ExpressError from '../errors/ExpressError.js'
 import checkPermissions from '../utils/checkPermissions.js'
 
+const getAllPlaces = async (req, res, next) => {
+  try {
+    const allPlaces = await Place.find({})
+    res.status(200).json(allPlaces)
+  } catch (error) {
+    next(error)
+  }
+}
+
+const getPlaceById = async (req, res, next) => {
+  try {
+    const { id } = req.params
+    const place = await Place.findById(id).populate('createdBy')
+    place.createdBy.email = undefined
+    if (!place) throw new ExpressError(404, 'Place not found')
+    res.status(200).json(place)
+  } catch (error) {
+    next(error)
+  }
+}
+
 const addNewPlace = async (req, res, next) => {
   try {
     const { name, location, image, description } = req.body
@@ -16,17 +37,9 @@ const addNewPlace = async (req, res, next) => {
   }
 }
 
-const getAllPlaces = async (req, res, next) => {
-  try {
-    const allPlaces = await Place.find({})
-    res.status(200).json(allPlaces)
-  } catch (error) {
-    next(error)
-  }
-}
-
 const editPlace = async (req, res, next) => {
   try {
+    console.log(req.body)
     const { id } = req.params
     const { name, location, description } = req.body
     if (!name || !location || !description) {
@@ -62,4 +75,4 @@ const deletePlace = async (req, res, next) => {
   }
 }
 
-export { addNewPlace, getAllPlaces, deletePlace, editPlace }
+export { addNewPlace, getAllPlaces, deletePlace, editPlace, getPlaceById }
