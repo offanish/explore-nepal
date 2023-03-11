@@ -16,7 +16,9 @@ const Navbar = () => {
   }
   return (
     <Wrapper toggleState={toggled}>
-      <Logo />
+      <Link to='/places' style={{ textDecoration: 'none' }}>
+        <Logo />
+      </Link>
       <div className='nav-links'>
         <NavLink
           to='/places'

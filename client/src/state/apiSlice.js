@@ -16,37 +16,58 @@ export const apiSlice = createApi({
     //place endpoints
     getAllPlaces: builder.query({
       query: () => ({ url: '/places', method: 'GET' }),
-      providesTags: ['Place'],
+      providesTags: (data) =>
+        data
+          ? [
+              { type: 'Place', id: 'List' },
+              ...data.map((place) => ({ type: 'Place', id: place._id })),
+            ]
+          : [{ type: 'Place', id: 'List' }],
     }),
     getPlaceById: builder.query({
       query: (id) => ({
         url: `/places/${id}`,
         method: 'GET',
       }),
-      providesTags: ['Place'],
+      providesTags: (data, error, id) => [{ type: 'Place', id }],
     }),
     createPlace: builder.mutation({
-      query: (place) => ({
+      query: (formData) => ({
         url: '/places',
         method: 'POST',
-        body: place,
+        body: formData,
       }),
-      invalidatesTags: ['Place'],
+      invalidatesTags: [{ type: 'Place', id: 'List' }],
     }),
     editPlace: builder.mutation({
-      query: ({ editId, values }) => ({
-        url: `/places/${editId}`,
+      query: ({ placeId, formData }) => ({
+        url: `/places/${placeId}`,
         method: 'PATCH',
-        body: values,
+        body: formData,
       }),
-      invalidatesTags: ['Place'],
+      invalidatesTags: (data, error, { editId }) => [
+        { type: 'Place', id: editId },
+      ],
     }),
     deletePlace: builder.mutation({
       query: (id) => ({
         url: `/places/${id}`,
         method: 'DELETE',
       }),
-      invalidatesTags: ['Place'],
+      invalidatesTags: [{ type: 'Place', id: 'List' }],
+    }),
+    uploadImage: builder.mutation({
+      query: (file) => ({
+        url: `/upload`,
+        method: 'POST',
+        body: file,
+      }),
+    }),
+    deleteImage: builder.mutation({
+      query: (image) => ({
+        url: `/upload/${image}`,
+        method: 'DELETE',
+      }),
     }),
     //user endpoints
     login: builder.mutation({
@@ -76,4 +97,6 @@ export const {
   useCreatePlaceMutation,
   useEditPlaceMutation,
   useDeletePlaceMutation,
+  useUploadImageMutation,
+  useDeleteImageMutation,
 } = apiSlice

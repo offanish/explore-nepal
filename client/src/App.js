@@ -3,6 +3,7 @@ import AllPlaces from './pages/AllPlaces'
 import NewPlace from './pages/NewPlace'
 import SignUp from './pages/SignUp'
 import PlacePage from './pages/PlacePage'
+import EditPlace from './pages/EditPlace'
 import Home from './pages/Home'
 
 import PageLayout from './components/PageLayout'
@@ -20,6 +21,7 @@ function App() {
           <Route index element={<AllPlaces />} />
           <Route path='new' element={<NewPlace />} />
           <Route path=':id' element={<PlacePage />} />
+          <Route path=':placeId/edit' element={<EditPlace />} />
         </Route>
         <Route path='profile' element={<Profile />} />
         <Route path='sign-up' element={<SignUp />} />

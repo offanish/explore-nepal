@@ -25,7 +25,6 @@ const AllPlaces = () => {
   }, [isError, dispatch, error?.data.msg])
 
   const { showAlert } = useSelector((state) => state.global)
-
   const places = allPlaces.map((place) => {
     const { name, location, description, image, _id } = place
     return (

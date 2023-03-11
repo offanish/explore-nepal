@@ -1,22 +1,24 @@
-import { useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useRef, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import ClipLoader from 'react-spinners/ClipLoader'
-import { useCreatePlaceMutation } from '../state/apiSlice'
+import { useEditPlaceMutation, useGetPlaceByIdQuery } from '../state/apiSlice'
 import { displayAlertThunk } from '../state/globalSlice'
 import Wrapper from '../assets/wrappers/NewPlace'
 import Alert from '../components/Alert'
+import Loading from '../components/Loading'
 
 const initialValues = { name: '', location: '', description: '' }
 
-const NewPlace = () => {
+const EditPlace = () => {
   const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const { placeId } = useParams()
   const { showAlert } = useSelector((state) => state.global)
 
-  const navigate = useNavigate()
-
   const [values, setValues] = useState(initialValues)
-  const [images, setImages] = useState([])
+  const [newFiles, setNewFiles] = useState([])
+  const [oldImages, setOldImages] = useState([])
   const [imgPreview, setImgPreview] = useState([])
   const fileUpload = useRef()
 
@@ -30,23 +32,62 @@ const NewPlace = () => {
     setValues(initialValues)
   }
 
-  const [createPlace, { isLoading }] = useCreatePlaceMutation()
+  const {
+    data: currentPlace,
+    isSuccess,
+    isLoading: isFetchingLoading,
+    isError,
+  } = useGetPlaceByIdQuery(placeId)
+  const [editPlace, { isLoading: isEditingLoading }] = useEditPlaceMutation()
+
+  useEffect(() => {
+    if (isSuccess) {
+      setImgPreview([
+        ...currentPlace?.image.map((img) => {
+          return {
+            fileName: img,
+            fileSrc: img,
+          }
+        }),
+      ])
+      setOldImages([...currentPlace?.image])
+      setValues({
+        name: currentPlace?.name,
+        location: currentPlace?.location,
+        description: currentPlace?.description,
+      })
+    }
+    if (isError) {
+      navigate(-1)
+    }
+  }, [
+    currentPlace?.description,
+    currentPlace?.image,
+    currentPlace?.location,
+    currentPlace?.name,
+    isSuccess,
+    isError,
+    navigate,
+  ])
 
   const handleAddImage = async (e) => {
     const file = e.target.files[0]
     if (!file) return
     const fileSrc = URL.createObjectURL(file)
     setImgPreview([...imgPreview, { fileName: file.name, fileSrc }])
-    setImages([...images, file])
+    setNewFiles([...newFiles, file])
   }
   const handleDeleteImage = (img) => {
     setImgPreview((prevImgPreview) =>
       prevImgPreview.filter((item) => item.fileSrc !== img.fileSrc)
     )
-    setImages((prevImages) =>
-      prevImages.filter((item) => item.name !== img.fileName)
+    setNewFiles((prevNewFiles) =>
+      prevNewFiles.filter((item) => item.name !== img.fileName)
     )
-    URL.revokeObjectURL(img.fileName)
+    setOldImages((prevOldImages) =>
+      prevOldImages.filter((item) => item !== img.fileSrc)
+    )
+    URL.revokeObjectURL(img?.fileName)
   }
 
   const handleSubmit = (event) => {
@@ -61,25 +102,35 @@ const NewPlace = () => {
       )
       return
     }
-    const formData = new FormData()
-    if (images.length) {
-      images.forEach((img) => {
-        formData.append('image', img, img.name)
-      })
-      formData.append('name', values.name)
-      formData.append('location', values.location)
-      formData.append('description', values.description)
+    if (!imgPreview.length) {
+      dispatch(
+        displayAlertThunk({
+          alertText: 'Please upload at least one Image',
+          alertType: 'danger',
+        })
+      )
+      return
     }
-    createPlace(formData)
+    const formData = new FormData()
+    if (newFiles) {
+      newFiles.forEach((file) => {
+        formData.append('image', file, file.name)
+      })
+    }
+    formData.append('oldImages', JSON.stringify(oldImages))
+    formData.append('name', values.name)
+    formData.append('location', values.location)
+    formData.append('description', values.description)
+    editPlace({ placeId, formData })
       .unwrap()
       .then((data) => {
         dispatch(
           displayAlertThunk({
-            alertText: 'Place Created Successfully',
+            alertText: 'Edited Place Successfully',
             alertType: 'success',
           })
         )
-        navigate(`/places/${data._id}`)
+        navigate(`/places/${currentPlace._id}`)
         clearValues()
       })
       .catch((error) => {
@@ -93,7 +144,8 @@ const NewPlace = () => {
   }
   return (
     <Wrapper>
-      <h1>Add New Place</h1>
+      <h1>Edit Place</h1>
+      {isFetchingLoading && <Loading />}
       <form onSubmit={handleSubmit} className='form'>
         {showAlert && <Alert />}
         <div className='form-row'>
@@ -146,7 +198,11 @@ const NewPlace = () => {
                       <img
                         className='img-thumbnail'
                         alt='uploaded'
-                        src={img.fileSrc}
+                        src={
+                          img.fileSrc.startsWith('blob')
+                            ? img.fileSrc
+                            : `/public/images/${img.fileSrc}`
+                        }
                       />
                     </figure>
                     <i
@@ -177,12 +233,16 @@ const NewPlace = () => {
             onChange={handleChange}
           />
         </div>
-        <button disabled={isLoading} className='btn btn-block'>
-          {isLoading ? <ClipLoader color='#ffffff' size='1rem' /> : 'Submit'}
+        <button disabled={isEditingLoading} className='btn btn-block'>
+          {isEditingLoading ? (
+            <ClipLoader color='#ffffff' size='1rem' />
+          ) : (
+            'Submit'
+          )}
         </button>
       </form>
     </Wrapper>
   )
 }
 
-export default NewPlace
+export default EditPlace

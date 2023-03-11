@@ -1,28 +1,31 @@
-//.env config
 import dotenv from 'dotenv'
-dotenv.config()
-
 import express from 'express'
-const app = express()
 import morgan from 'morgan'
+import path from 'path'
+import multer from 'multer'
 import connectDB from './db/connect.js'
 
 //route import
 import placeRouter from './routes/placeRoutes.js'
 import authRouter from './routes/authRoutes.js'
+import uploadRouter from './routes/uploadRoutes.js'
 
 //middleware import
 import notFoundMiddleware from './middleware/notFound.js'
 import errorHandlerMiddleware from './middleware/errorHandler.js'
+import authenticateUser from './middleware/auth.js'
 
+//config
+dotenv.config()
+const app = express()
 app.use(express.json())
-
-if (process.env.NODE_ENV !== 'production') {
-  app.use(morgan('dev'))
-}
+app.use(morgan('dev'))
+const __dirname = path.resolve()
+app.use('/public', express.static(path.join(__dirname, 'public')))
 
 app.use('/api/places', placeRouter)
 app.use('/api/auth', authRouter)
+app.use('/api/upload', authenticateUser, uploadRouter)
 
 app.use(notFoundMiddleware)
 app.use(errorHandlerMiddleware)

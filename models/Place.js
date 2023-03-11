@@ -9,10 +9,12 @@ const PlaceSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Please provide location'],
   },
-  image: {
-    type: String,
-    required: [true, 'Please provide an image'],
-  },
+  image: [
+    {
+      type: String,
+      required: [true, 'Please provide an image'],
+    },
+  ],
   description: {
     type: String,
     required: [true, 'Please provide a description'],
