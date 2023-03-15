@@ -11,7 +11,7 @@ export const apiSlice = createApi({
       }
     },
   }),
-  tagTypes: ['User', 'Place'],
+  tagTypes: ['User', 'Place', 'Review'],
   endpoints: (builder) => ({
     //place endpoints
     getAllPlaces: builder.query({
@@ -69,6 +69,24 @@ export const apiSlice = createApi({
         method: 'DELETE',
       }),
     }),
+    addNewReview: builder.mutation({
+      query: ({ placeId, rating, comment }) => ({
+        url: `/places/${placeId}/reviews`,
+        method: 'POST',
+        body: { rating, comment },
+      }),
+      invalidatesTags: (data, error, { placeId }) => [
+        'Review',
+        { type: 'Place', id: placeId },
+      ],
+    }),
+    getPlaceReviews: builder.query({
+      query: (placeId) => ({
+        url: `/places/${placeId}/reviews`,
+        method: 'GET',
+      }),
+      providesTags: ['Review'],
+    }),
     //user endpoints
     login: builder.mutation({
       query: (credentials) => ({
@@ -99,4 +117,6 @@ export const {
   useDeletePlaceMutation,
   useUploadImageMutation,
   useDeleteImageMutation,
+  useAddNewReviewMutation,
+  useGetPlaceReviewsQuery,
 } = apiSlice

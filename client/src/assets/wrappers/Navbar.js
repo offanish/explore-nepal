@@ -38,6 +38,7 @@ const Wrapper = styled.nav`
   }
   .navbar-btn {
     position: relative;
+    /* margin-bottom: 10px; */
   }
   .profile-btn {
     padding: 10px 2rem;

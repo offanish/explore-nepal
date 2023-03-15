@@ -80,3 +80,7 @@ h1 {
 .alert-margin {
   margin-bottom: 0.5rem;
 }
+/* rating */
+.rating {
+  display: flex;
+}

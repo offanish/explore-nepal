@@ -2,6 +2,7 @@ import fs from 'fs'
 import Place from '../models/Place.js'
 import ExpressError from '../errors/ExpressError.js'
 import checkPermissions from '../utils/checkPermissions.js'
+import Review from '../models/Review.js'
 
 const getAllPlaces = async (req, res, next) => {
   try {
@@ -15,7 +16,7 @@ const getAllPlaces = async (req, res, next) => {
 const getPlaceById = async (req, res, next) => {
   try {
     const { id } = req.params
-    const place = await Place.findById(id).populate('createdBy')
+    const place = await Place.findById(id).populate('createdBy', 'name')
     if (!place) {
       throw new ExpressError(404, 'Place not found')
     }
@@ -101,10 +102,65 @@ const deletePlace = async (req, res, next) => {
       })
     })
     await place.remove()
+    await Review.deleteMany({ placeId: id })
     res.status(204).json({ msg: 'Place deleted successfully' })
   } catch (error) {
     next(error)
   }
 }
 
-export { addNewPlace, getAllPlaces, deletePlace, editPlace, getPlaceById }
+const addNewReview = async (req, res, next) => {
+  try {
+    const { id } = req.params
+    const { rating, comment } = req.body
+    if (!rating) {
+      throw new ExpressError(400, 'Please provide a rating')
+    }
+    const place = await Place.findById(id)
+    if (!place) {
+      throw new ExpressError(404, 'Place not found')
+    }
+    const alreadyReviewed = await Review.find({
+      createdBy: req.user.userId,
+      placeId: id,
+    })
+    if (alreadyReviewed.length) {
+      throw new ExpressError(400, 'Already reviewed this place')
+    }
+
+    req.body.createdBy = req.user.userId
+    req.body.placeId = id
+
+    const review = new Review(req.body)
+    place.reviews.push(review._id)
+
+    await review.save()
+    await place.save()
+    res.status(201).json(review)
+  } catch (error) {
+    next(error)
+  }
+}
+
+const getPlaceReviews = async (req, res, next) => {
+  try {
+    const { id } = req.params
+    const reviews = await Review.find({ placeId: id }).populate(
+      'createdBy',
+      'name'
+    )
+    res.status(200).json(reviews)
+  } catch (error) {
+    next(error)
+  }
+}
+
+export {
+  addNewPlace,
+  getAllPlaces,
+  deletePlace,
+  editPlace,
+  getPlaceById,
+  addNewReview,
+  getPlaceReviews,
+}

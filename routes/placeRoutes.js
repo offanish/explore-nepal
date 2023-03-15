@@ -12,6 +12,8 @@ import {
   deletePlace,
   editPlace,
   getPlaceById,
+  addNewReview,
+  getPlaceReviews,
 } from '../controllers/placeControllers.js'
 
 const storage = multer.diskStorage({
@@ -46,5 +48,10 @@ router
   .get(getPlaceById)
   .patch(authenticateUser, upload.array('image'), editPlace)
   .delete(authenticateUser, deletePlace)
+
+router
+  .route('/:id/reviews')
+  .get(getPlaceReviews)
+  .post(authenticateUser, addNewReview)
 
 export default router

@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-const Wrapper = styled.article`
+const Wrapper = styled.section`
   width: 100%;
   gap: 0.8rem;
   border-radius: 0.5rem;
@@ -13,7 +13,7 @@ const Wrapper = styled.article`
   }
   .image {
     width: 100%;
-    height: 40vh;
+    height: 30vh;
     object-fit: cover;
     object-position: center;
   }
@@ -40,7 +40,7 @@ const Wrapper = styled.article`
   }
   h2 {
     font-weight: 500;
-    font-size: 1rem;
+    font-size: 1.25rem;
   }
   p {
     white-space: nowrap;
@@ -73,6 +73,70 @@ const Wrapper = styled.article`
     font-size: 0.9rem;
     font-weight: 500;
   }
+  .review-heading {
+    padding: 0.5rem;
+  }
+  .review-submit-btn-group {
+    width: 40%;
+  }
+  .form-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.5rem;
+  }
+  .form-input {
+    border: 2px solid #adadad;
+    height: 2rem;
+    border-radius: 5px;
+    text-indent: 5px;
+  }
+
+  .description {
+    height: 6rem;
+    text-indent: 0;
+    padding-left: 10px;
+    padding-top: 4px;
+    resize: none;
+  }
+  .rating-star {
+    margin: 0;
+    font-size: 2rem;
+    cursor: ${(props) => !props.ratingViewOnly && 'pointer'};
+    transition: transform 0.2s linear;
+  }
+  .rating-star:hover {
+    transform: ${(props) => !props.ratingViewOnly && 'scale(1.2)'};
+  }
+  .rating-star.fa-solid {
+    color: #e6cb00;
+  }
+  .rating-star.fa-solid.empty {
+    color: #c5c5c5;
+  }
+  .review-container {
+    background-color: #f3f3f3;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin: 0.5rem;
+    border-radius: 5px;
+    padding: 0.5rem 0.5rem;
+    margin-bottom: 1rem;
+  }
+  .no-reviews-text {
+    text-align: center;
+    font-size: 2rem;
+  }
+  .review-name {
+    font-weight: 500;
+    font-size: 1rem;
+  }
+  .review-comment {
+    color: #7b7b7b;
+    font-size: 1rem;
+  }
+
   @media (max-width: 550px) {
     .place-details {
       flex-direction: ${(props) => props.placePage && 'column'};
@@ -81,6 +145,9 @@ const Wrapper = styled.article`
       width: 100%;
       flex-direction: row;
       justify-content: space-between;
+    }
+    .image-full {
+      height: 30vh;
     }
   }
 `
