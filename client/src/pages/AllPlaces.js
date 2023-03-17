@@ -6,15 +6,18 @@ import { useGetAllPlacesQuery } from '../state/apiSlice'
 import { useDispatch, useSelector } from 'react-redux'
 import { displayAlertThunk } from '../state/globalSlice'
 import { useEffect } from 'react'
+import Search from '../components/Search'
+import { useParams } from 'react-router-dom'
 
 const AllPlaces = () => {
   const dispatch = useDispatch()
+  const { keyword } = useParams()
   const {
     data: allPlaces = [],
     isLoading,
     isError,
     error,
-  } = useGetAllPlacesQuery()
+  } = useGetAllPlacesQuery(keyword)
 
   useEffect(() => {
     if (isError) {
@@ -45,7 +48,17 @@ const AllPlaces = () => {
   return (
     <Wrapper>
       {showAlert && <Alert />}
-      <h1>All Places</h1>
+      {!keyword && (
+        <>
+          <h1>Search Place</h1>
+          <Search />
+        </>
+      )}
+      {allPlaces.length ? (
+        <h1>{!keyword ? 'All Places' : `Search results for ${keyword}`}</h1>
+      ) : (
+        <h1>No Place Found</h1>
+      )}
       <div className='container'>{places}</div>
     </Wrapper>
   )

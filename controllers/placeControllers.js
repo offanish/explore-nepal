@@ -6,7 +6,15 @@ import Review from '../models/Review.js'
 
 const getAllPlaces = async (req, res, next) => {
   try {
-    const allPlaces = await Place.find({})
+    const keyword = req.query.keyword
+      ? {
+          name: {
+            $regex: req.query.keyword,
+            $options: 'i',
+          },
+        }
+      : {}
+    const allPlaces = await Place.find(keyword)
     res.status(200).json(allPlaces)
   } catch (error) {
     next(error)

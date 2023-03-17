@@ -15,7 +15,10 @@ export const apiSlice = createApi({
   endpoints: (builder) => ({
     //place endpoints
     getAllPlaces: builder.query({
-      query: () => ({ url: '/places', method: 'GET' }),
+      query: (keyword = '') => ({
+        url: `/places?keyword=${keyword}`,
+        method: 'GET',
+      }),
       providesTags: (data) =>
         data
           ? [

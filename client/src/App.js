@@ -23,6 +23,7 @@ function App() {
           <Route path=':id' element={<PlacePage />} />
           <Route path=':placeId/edit' element={<EditPlace />} />
         </Route>
+        <Route path='/search/:keyword' element={<AllPlaces />} />
         <Route path='profile' element={<Profile />} />
         <Route path='sign-up' element={<SignUp />} />
       </Route>
