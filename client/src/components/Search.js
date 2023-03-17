@@ -29,6 +29,7 @@ const Search = () => {
           name='keyword'
           type='text'
           className='search-input'
+          placeholder='Place name'
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
         />

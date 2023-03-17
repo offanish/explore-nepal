@@ -1,11 +1,11 @@
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const Home = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
   useEffect(() => {
-    navigate('/places');
-  });
-};
+    navigate('/places')
+  })
+}
 
-export default Home;
+export default Home

@@ -84,3 +84,10 @@ h1 {
 .rating {
   display: flex;
 }
+
+/* place page */
+@media (max-width: 550px) {
+  .place-page {
+    margin-top: 1rem;
+  }
+}

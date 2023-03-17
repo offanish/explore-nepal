@@ -63,7 +63,7 @@ const PlacePage = () => {
           })
         )
       }
-      const review = await addNewReview({
+      await addNewReview({
         placeId: place._id,
         rating,
         comment,
@@ -81,7 +81,14 @@ const PlacePage = () => {
   }
 
   return (
-    <section style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+    <section
+      className='place-page'
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '1rem',
+      }}
+    >
       {showAlert && <Alert margin />}
       <Wrapper placePage>
         <Carousel
