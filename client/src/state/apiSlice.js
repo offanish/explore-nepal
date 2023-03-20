@@ -14,6 +14,7 @@ export const apiSlice = createApi({
   tagTypes: ['User', 'Place', 'Review'],
   endpoints: (builder) => ({
     //place endpoints
+
     getAllPlaces: builder.query({
       query: (keyword = '') => ({
         url: `/places?keyword=${keyword}`,
@@ -27,6 +28,7 @@ export const apiSlice = createApi({
             ]
           : [{ type: 'Place', id: 'List' }],
     }),
+
     getPlaceById: builder.query({
       query: (id) => ({
         url: `/places/${id}`,
@@ -34,6 +36,7 @@ export const apiSlice = createApi({
       }),
       providesTags: (data, error, id) => [{ type: 'Place', id }],
     }),
+
     createPlace: builder.mutation({
       query: (formData) => ({
         url: '/places',
@@ -42,6 +45,7 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: [{ type: 'Place', id: 'List' }],
     }),
+
     editPlace: builder.mutation({
       query: ({ placeId, formData }) => ({
         url: `/places/${placeId}`,
@@ -52,6 +56,7 @@ export const apiSlice = createApi({
         { type: 'Place', id: editId },
       ],
     }),
+
     deletePlace: builder.mutation({
       query: (id) => ({
         url: `/places/${id}`,
@@ -59,6 +64,21 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: [{ type: 'Place', id: 'List' }],
     }),
+
+    getMyPlaces: builder.query({
+      query: () => ({
+        url: '/places/user',
+        method: 'GET',
+      }),
+      providesTags: (data) =>
+        data
+          ? [
+              { type: 'Place', id: 'List' },
+              ...data.map((place) => ({ type: 'Place', id: place._id })),
+            ]
+          : [{ type: 'Place', id: 'List' }],
+    }),
+
     uploadImage: builder.mutation({
       query: (file) => ({
         url: `/upload`,
@@ -66,12 +86,14 @@ export const apiSlice = createApi({
         body: file,
       }),
     }),
+
     deleteImage: builder.mutation({
       query: (image) => ({
         url: `/upload/${image}`,
         method: 'DELETE',
       }),
     }),
+
     addNewReview: builder.mutation({
       query: ({ placeId, rating, comment }) => ({
         url: `/places/${placeId}/reviews`,
@@ -83,6 +105,7 @@ export const apiSlice = createApi({
         { type: 'Place', id: placeId },
       ],
     }),
+
     getPlaceReviews: builder.query({
       query: (placeId) => ({
         url: `/places/${placeId}/reviews`,
@@ -91,6 +114,7 @@ export const apiSlice = createApi({
       providesTags: ['Review'],
     }),
     //user endpoints
+
     login: builder.mutation({
       query: (credentials) => ({
         url: '/auth/login',
@@ -99,6 +123,7 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: ['User'],
     }),
+
     register: builder.mutation({
       query: (credentials) => ({
         url: '/auth/register',
@@ -122,4 +147,5 @@ export const {
   useDeleteImageMutation,
   useAddNewReviewMutation,
   useGetPlaceReviewsQuery,
+  useGetMyPlacesQuery,
 } = apiSlice

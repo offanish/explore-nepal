@@ -1,41 +1,5 @@
 import ExpressError from '../errors/ExpressError.js'
 import User from '../models/User.js'
-import Place from '../models/Place.js'
-
-const getUser = async (req, res, next) => {
-  try {
-    const { userId } = req.user
-    const user = await User.findOne({ _id: userId })
-    user.password = undefined
-    res.status(200).json({ user })
-  } catch (error) {
-    next(error)
-  }
-}
-
-const getPlaceOwner = async (req, res, next) => {
-  try {
-    const { id } = req.params
-    const user = await User.findOne({ _id: id })
-    user.email = undefined
-    user.password = undefined
-    res.status(200).json({ user })
-  } catch (error) {
-    next(error)
-  }
-}
-const getUserPlaces = async (req, res, next) => {
-  try {
-    const { id } = req.params
-    const places = await Place.find({ createdBy: id })
-    if (!places) {
-      throw new ExpressError(404, 'Places not found')
-    }
-    res.status(200).json({ places })
-  } catch (error) {
-    next(error)
-  }
-}
 
 const register = async (req, res, next) => {
   try {
@@ -77,15 +41,22 @@ const login = async (req, res, next) => {
     next(error)
   }
 }
-const logout = async (req, res, next) => {
+
+const updateUser = async (req, res, next) => {
   try {
-    res
-      .clearCookie('token', { httpOnly: true })
-      .status(200)
-      .json({ msg: 'logged out successfully' })
+    const user = await User.findById(req.user.userId)
+    if (!user) {
+      throw new ExpressError(404, 'User not found')
+    }
+    user.name = req.body.name || user.name
+    user.email = req.body.email || user.email
+    if (req.body.password) {
+      user.password = req.body.password
+    }
+    const updatedUser = await user.save()
+    res.status(200).json(updatedUser)
   } catch (error) {
     next(error)
   }
 }
-
-export { register, login, getUser, logout, getPlaceOwner, getUserPlaces }
+export { register, login, updateUser }

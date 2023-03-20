@@ -12,6 +12,7 @@ import {
   deletePlace,
   editPlace,
   getPlaceById,
+  getMyPlaces,
   addNewReview,
   getPlaceReviews,
 } from '../controllers/placeControllers.js'
@@ -43,6 +44,9 @@ router
   .route('/')
   .get(getAllPlaces)
   .post(authenticateUser, upload.array('image'), addNewPlace)
+
+router.get('/user', authenticateUser, getMyPlaces)
+
 router
   .route('/:id')
   .get(getPlaceById)

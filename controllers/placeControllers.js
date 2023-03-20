@@ -150,6 +150,15 @@ const addNewReview = async (req, res, next) => {
   }
 }
 
+const getMyPlaces = async (req, res, next) => {
+  try {
+    const places = await Place.find({ createdBy: req.user.userId })
+    res.status(200).json(places)
+  } catch (error) {
+    next(error)
+  }
+}
+
 const getPlaceReviews = async (req, res, next) => {
   try {
     const { id } = req.params
@@ -169,6 +178,7 @@ export {
   deletePlace,
   editPlace,
   getPlaceById,
+  getMyPlaces,
   addNewReview,
   getPlaceReviews,
 }

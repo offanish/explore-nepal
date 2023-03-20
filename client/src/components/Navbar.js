@@ -4,6 +4,7 @@ import Wrapper from '../assets/wrappers/Navbar'
 import Logo from './Logo'
 import { useSelector, useDispatch } from 'react-redux'
 import { displayAlertThunk, logout } from '../state/globalSlice'
+import { apiSlice } from '../state/apiSlice'
 
 const Navbar = () => {
   const dispatch = useDispatch()
@@ -70,6 +71,9 @@ const Navbar = () => {
                 onClick={() => {
                   setShowDropdown(false)
                   dispatch(logout())
+                  dispatch(
+                    apiSlice.util.invalidateTags({ type: 'Place', id: 'User' })
+                  )
                   dispatch(
                     displayAlertThunk({
                       alertType: 'success',
