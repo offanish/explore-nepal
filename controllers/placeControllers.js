@@ -49,7 +49,6 @@ const addNewPlace = async (req, res, next) => {
         const uploadedFile = await cloudinary.v2.uploader.upload(fileUri, {
           folder: 'explore-nepal',
         })
-        console.log(uploadedFile)
         return { url: uploadedFile.url, publicId: uploadedFile.public_id }
       })
     )
