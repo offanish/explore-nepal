@@ -12,7 +12,7 @@ const Place = ({ name, location, description, image, id }) => {
     <Wrapper onClick={handleClick}>
       <img
         className='image'
-        src={`/public/images/${image[0]}`}
+        src={image[0].url}
         alt={name}
         onError={(event) => {
           event.target.src = notFoundImage

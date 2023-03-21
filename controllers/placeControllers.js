@@ -3,6 +3,7 @@ import Place from '../models/Place.js'
 import ExpressError from '../errors/ExpressError.js'
 import checkPermissions from '../utils/checkPermissions.js'
 import Review from '../models/Review.js'
+import { cloudinary, dataUri, upload } from '../config/cloudinaryConfig.js'
 
 const getAllPlaces = async (req, res, next) => {
   try {
@@ -41,7 +42,18 @@ const addNewPlace = async (req, res, next) => {
     if (!name || !location || !description) {
       throw new ExpressError(400, 'Please provide all values')
     }
-    req.body.image = req.files.map((file) => file.filename)
+    //file upload to cloudinary
+    const files = await Promise.all(
+      req.files.map(async (file) => {
+        const fileUri = dataUri(file).content
+        const uploadedFile = await cloudinary.v2.uploader.upload(fileUri, {
+          folder: 'explore-nepal',
+        })
+        console.log(uploadedFile)
+        return { url: uploadedFile.url, publicId: uploadedFile.public_id }
+      })
+    )
+    req.body.image = files
     req.body.createdBy = req.user.userId
     const place = await Place.create(req.body)
     res.status(201).json(place)
@@ -55,7 +67,18 @@ const editPlace = async (req, res, next) => {
     const { id } = req.params
     const { name, location, description } = req.body
     const oldImages = JSON.parse(req.body.oldImages)
-    const newImages = req.files.map((file) => file.filename)
+
+    //file upload to cloudinary
+    const newImages = await Promise.all(
+      req.files.map(async (file) => {
+        const fileUri = dataUri(file).content
+        const uploadedFile = await cloudinary.v2.uploader.upload(fileUri, {
+          folder: 'explore-nepal',
+        })
+        return { url: uploadedFile.url, publicId: uploadedFile.public_id }
+      })
+    )
+
     if (!name || !location || !description) {
       throw new ExpressError(400, 'Please provide all values')
     }
@@ -68,18 +91,15 @@ const editPlace = async (req, res, next) => {
     }
 
     checkPermissions(req.user.userId, place.createdBy)
-
+    // delete image from cloud
     const deletedImages = place.image.filter((img) => {
-      return !oldImages.includes(img)
+      return !oldImages.includes(img.url)
     })
-
-    deletedImages.map((img) => {
-      fs.unlink(`public/images/${img}`, (error) => {
-        if (error) {
-          throw new ExpressError(422, 'Unable to delete image')
-        }
-      })
-    })
+    if (deletedImages.length) {
+      await cloudinary.v2.api.delete_resources(
+        deletedImages.map((img) => img.publicId)
+      )
+    }
 
     place.image.pull(...deletedImages)
     place.image.push(...newImages)
@@ -102,13 +122,9 @@ const deletePlace = async (req, res, next) => {
       throw new ExpressError(404, 'Place not found')
     }
     checkPermissions(req.user.userId, place.createdBy)
-    place.image.map((img) => {
-      fs.unlink(`public/images/${img}`, (error) => {
-        if (error) {
-          throw new ExpressError(500, 'Unable to delete image')
-        }
-      })
-    })
+    await cloudinary.v2.api.delete_resources(
+      place.image.map((img) => img.publicId)
+    )
     await place.remove()
     await Review.deleteMany({ placeId: id })
     res.status(204).json({ msg: 'Place deleted successfully' })

@@ -71,7 +71,9 @@ const Profile = () => {
         </section>
         <section className='user-places-container'>
           <h2 className='user-profile-heading'>User Places</h2>
+
           {isFetching ? <Loading /> : <div className='container'>{places}</div>}
+          {!places.length && <h1>You haven't added any places</h1>}
         </section>
       </Wrapper>
     </>

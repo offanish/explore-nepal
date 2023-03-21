@@ -45,12 +45,12 @@ const EditPlace = () => {
       setImgPreview([
         ...currentPlace?.image.map((img) => {
           return {
-            fileName: img,
-            fileSrc: img,
+            fileName: img.url,
+            fileSrc: img.url,
           }
         }),
       ])
-      setOldImages([...currentPlace?.image])
+      setOldImages([...currentPlace?.image.map((img) => img.url)])
       setValues({
         name: currentPlace?.name,
         location: currentPlace?.location,
@@ -198,11 +198,7 @@ const EditPlace = () => {
                       <img
                         className='img-thumbnail'
                         alt='uploaded'
-                        src={
-                          img.fileSrc.startsWith('blob')
-                            ? img.fileSrc
-                            : `/public/images/${img.fileSrc}`
-                        }
+                        src={img.fileSrc}
                       />
                     </figure>
                     <i

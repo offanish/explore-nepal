@@ -4,7 +4,12 @@ const data = [
     location: 'Lwang Ghalel, Kaski',
     description:
       'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Odio, pariatur?',
-    image: 'mardi.jpeg',
+    image: [
+      {
+        url: 'https://res.cloudinary.com/dcilag3ve/image/upload/v1679400488/explore-nepal/mardi_lt6iuk.jpg',
+        publicId: 'explore-nepal/mardi_lt6iuk',
+      },
+    ],
     createdBy: '63c780dc3811b9fbfd25e819',
   },
 
@@ -13,7 +18,12 @@ const data = [
     location: 'Far West Province',
     description:
       'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Odio, pariatur?',
-    image: 'khaptad.jpg',
+    image: [
+      {
+        url: 'https://res.cloudinary.com/dcilag3ve/image/upload/v1679400485/explore-nepal/khaptad_ow0rgq.jpg',
+        publicId: 'explore-nepal/khaptad_ow0rgq',
+      },
+    ],
     createdBy: '63c780dc3811b9fbfd25e819',
   },
   {
@@ -21,7 +31,12 @@ const data = [
     location: 'Begnas, Kaski',
     description:
       'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Odio, pariatur?',
-    image: 'begnas.jpg',
+    image: [
+      {
+        url: 'https://res.cloudinary.com/dcilag3ve/image/upload/v1679400487/explore-nepal/begnas_ppir6u.jpg',
+        publicId: 'explore-nepal/begnas_ppir6u',
+      },
+    ],
     createdBy: '63c780dc3811b9fbfd25e819',
   },
   {
@@ -29,7 +44,12 @@ const data = [
     location: 'Taplejung, Koshi Province',
     description:
       'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Odio, pariatur?',
-    image: 'pathibhara.jpeg',
+    image: [
+      {
+        url: 'https://res.cloudinary.com/dcilag3ve/image/upload/v1679400486/explore-nepal/pathibhara_mwddvt.jpg',
+        publicId: 'explore-nepal/pathibhara_mwddvt',
+      },
+    ],
     createdBy: '63c780dc3811b9fbfd25e819',
   },
   {
@@ -37,7 +57,12 @@ const data = [
     location: 'Gosaikunda, Rasuwa',
     description:
       'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Odio, pariatur?',
-    image: 'gosaikunda.jpg',
+    image: [
+      {
+        url: 'https://res.cloudinary.com/dcilag3ve/image/upload/v1679400487/explore-nepal/gosaikunda_pddr0m.jpg',
+        publicId: 'explore-nepal/gosaikunda_pddr0m',
+      },
+    ],
     createdBy: '63c780dc3811b9fbfd25e819',
   },
   {
@@ -45,7 +70,12 @@ const data = [
     location: 'Rolwaling Valley, Dolakha',
     description:
       'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Odio, pariatur?',
-    image: 'tso-rolpa.jpg',
+    image: [
+      {
+        url: 'https://res.cloudinary.com/dcilag3ve/image/upload/v1679400487/explore-nepal/tso-rolpa_rrgdnb.jpg',
+        publicId: 'explore-nepal/tso-rolpa_rrgdnb',
+      },
+    ],
     createdBy: '63c780dc3811b9fbfd25e819',
   },
   {
@@ -53,7 +83,12 @@ const data = [
     location: 'Kagbeni, Mustang',
     description:
       'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Odio, pariatur?',
-    image: 'kagbeni.jpg',
+    image: [
+      {
+        url: 'https://res.cloudinary.com/dcilag3ve/image/upload/v1679400487/explore-nepal/kagbeni_sagzxm.jpg',
+        publicId: 'explore-nepal/kagbeni_sagzxm',
+      },
+    ],
     createdBy: '63c780dc3811b9fbfd25e819',
   },
   {
@@ -61,7 +96,12 @@ const data = [
     location: 'Karmaihiya, Sarlahi',
     description:
       'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Odio, pariatur?',
-    image: 'bharat-tal.jpg',
+    image: [
+      {
+        url: 'https://res.cloudinary.com/dcilag3ve/image/upload/v1679400487/explore-nepal/bharat-tal_yanbhl.jpg',
+        publicId: 'explore-nepal/bharat-tal_yanbhl',
+      },
+    ],
     createdBy: '63c780dc3811b9fbfd25e819',
   },
   {
@@ -69,7 +109,12 @@ const data = [
     location: 'Gadhi, Makawanpur',
     description:
       'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Odio, pariatur?',
-    image: 'makawanpur-gadhi.jpg',
+    image: [
+      {
+        url: 'https://res.cloudinary.com/dcilag3ve/image/upload/v1679400487/explore-nepal/makawanpur-gadhi_cxsr8a.jpg',
+        publicId: 'explore-nepal/makawanpur-gadhi_cxsr8a',
+      },
+    ],
     createdBy: '63c780dc3811b9fbfd25e819',
   },
 ]

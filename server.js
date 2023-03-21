@@ -16,9 +16,9 @@ import errorHandlerMiddleware from './middleware/errorHandler.js'
 dotenv.config()
 const app = express()
 app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
 app.use(morgan('dev'))
 const __dirname = path.resolve()
-app.use('/public', express.static(path.join(__dirname, 'public')))
 
 app.use('/api/places', placeRouter)
 app.use('/api/auth', authRouter)

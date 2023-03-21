@@ -1,6 +1,5 @@
 import express from 'express'
-import multer from 'multer'
-import path from 'path'
+import { upload } from '../config/cloudinaryConfig.js'
 
 const router = express.Router()
 
@@ -16,29 +15,6 @@ import {
   addNewReview,
   getPlaceReviews,
 } from '../controllers/placeControllers.js'
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'public/images')
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname))
-  },
-})
-const upload = multer({
-  storage,
-  fileFilter: (req, file, cb) => {
-    if (
-      (file.mimetype === 'image/jpeg' ||
-        file.mimetype === 'image/jpg' ||
-        file.mimetype === 'image/png') &&
-      req.headers['content-length'] < 50000000
-    ) {
-      return cb(null, true)
-    }
-    return cb(null, false)
-  },
-})
 
 router
   .route('/')
