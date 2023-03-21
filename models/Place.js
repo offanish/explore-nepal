@@ -12,8 +12,8 @@ const PlaceSchema = new mongoose.Schema(
     },
     image: [
       {
-        type: String,
-        required: [true, 'Please provide an image'],
+        url: { type: String },
+        publicId: { type: String },
       },
     ],
     description: {

@@ -83,7 +83,7 @@ const Wrapper = styled.nav`
   @media (max-width: 1000px) {
     padding: 1rem 2%;
   }
-  @media (max-width: 550px) {
+  @media (max-width: 600px) {
     padding: 0.5rem 5%;
     flex-direction: column;
     align-items: flex-start;
@@ -96,6 +96,7 @@ const Wrapper = styled.nav`
       gap: 1rem;
       width: 100%;
       text-align: center;
+      margin-top: 1rem;
     }
     .nav-link {
       width: 100%;
@@ -107,7 +108,8 @@ const Wrapper = styled.nav`
     }
     .navbar-btn {
       display: ${(props) => !props.toggleState && 'none'};
-      margin-top: 0.6rem;
+      margin-top: 1rem;
+      margin-bottom: 1rem;
       align-self: center;
     }
   }

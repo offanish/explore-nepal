@@ -4,6 +4,10 @@ const Wrapper = styled.main`
   display: flex;
   gap: 1.5rem;
 
+  h1 {
+    text-align: center;
+    margin-top: 1rem;
+  }
   .user-details-container {
     flex: 1;
   }

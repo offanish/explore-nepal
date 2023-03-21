@@ -31,7 +31,7 @@ const PlacePage = () => {
   const { data: place, isLoading } = useGetPlaceByIdQuery(id)
   const { data: reviews, isLoading: isReviewLoading } =
     useGetPlaceReviewsQuery(id)
-  const [deletePlace] = useDeletePlaceMutation()
+  const [deletePlace, { isLoading: isDeleting }] = useDeletePlaceMutation()
   const [addNewReview, { isLoading: isAddingReview }] =
     useAddNewReviewMutation()
 
@@ -105,7 +105,7 @@ const PlacePage = () => {
             <img
               key={index}
               className='image image-full'
-              src={`/public/images/${img}`}
+              src={img.url}
               alt={place.name}
               onError={(event) => {
                 event.target.src = notFoundImage
@@ -136,9 +136,14 @@ const PlacePage = () => {
               </Link>
               <button
                 className='btn btn-delete'
+                disabled={isDeleting}
                 onClick={() => handleDeletePlace(place._id)}
               >
-                Delete
+                {isDeleting ? (
+                  <ClipLoader color='#ffffff' size='1rem' />
+                ) : (
+                  'Delete'
+                )}
               </button>
             </div>
           )}
