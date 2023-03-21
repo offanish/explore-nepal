@@ -1,8 +1,9 @@
-import mongoose from 'mongoose';
+import mongoose from 'mongoose'
 
 const connectDB = async () => {
-  mongoose.set('strictQuery', false);
-  return mongoose.connect('mongodb://127.0.0.1:27017/placesDB');
-};
+  const url = process.env.DB_URL
+  mongoose.set('strictQuery', false)
+  return mongoose.connect(url)
+}
 
-export default connectDB;
+export default connectDB

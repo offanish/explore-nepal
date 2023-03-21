@@ -146,7 +146,7 @@ const SignUp = () => {
           />
         </div>
         <p>
-          {isRegistered ? 'Already registered?' : 'Not registered yet?'}
+          {isRegistered ? 'Not registered yet?' : 'Already registered?'}
           {
             <button
               type='button'

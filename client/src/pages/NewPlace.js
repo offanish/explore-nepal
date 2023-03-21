@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import ClipLoader from 'react-spinners/ClipLoader'
@@ -11,7 +11,7 @@ const initialValues = { name: '', location: '', description: '' }
 
 const NewPlace = () => {
   const dispatch = useDispatch()
-  const { showAlert } = useSelector((state) => state.global)
+  const { showAlert, user } = useSelector((state) => state.global)
 
   const navigate = useNavigate()
 
@@ -31,6 +31,18 @@ const NewPlace = () => {
   }
 
   const [createPlace, { isLoading }] = useCreatePlaceMutation()
+
+  useEffect(() => {
+    if (!user) {
+      navigate('/sign-up')
+      dispatch(
+        displayAlertThunk({
+          alertText: 'Please sign in to add new place',
+          alertType: 'danger',
+        })
+      )
+    }
+  }, [user, navigate, dispatch])
 
   const handleAddImage = async (e) => {
     const file = e.target.files[0]

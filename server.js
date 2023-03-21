@@ -23,6 +23,13 @@ app.use('/public', express.static(path.join(__dirname, 'public')))
 app.use('/api/places', placeRouter)
 app.use('/api/auth', authRouter)
 
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '/client/build')))
+  app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'))
+  })
+}
+
 app.use(notFoundMiddleware)
 app.use(errorHandlerMiddleware)
 
