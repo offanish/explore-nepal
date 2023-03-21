@@ -4,6 +4,7 @@ import NewPlace from './pages/NewPlace'
 import SignUp from './pages/SignUp'
 import PlacePage from './pages/PlacePage'
 import EditPlace from './pages/EditPlace'
+import EditProfile from './pages/EditProfile'
 import Home from './pages/Home'
 
 import PageLayout from './components/PageLayout'
@@ -25,6 +26,7 @@ function App() {
         </Route>
         <Route path='/search/:keyword' element={<AllPlaces />} />
         <Route path='profile' element={<Profile />} />
+        <Route path='profile/edit' element={<EditProfile />} />
         <Route path='sign-up' element={<SignUp />} />
       </Route>
       <Route path='*' element={<h1>Page Doesn't exist</h1>} />

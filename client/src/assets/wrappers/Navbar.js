@@ -58,6 +58,7 @@ const Wrapper = styled.nav`
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    z-index: 1;
   }
   .show-dropdown {
     visibility: visible;

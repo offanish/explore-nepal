@@ -31,6 +31,10 @@ const globalSlice = createSlice({
       state.user = action.payload.user
       state.token = action.payload.token
     },
+    setUpdatedUser: (state, action) => {
+      localStorage.setItem('user', JSON.stringify(action.payload.user))
+      state.user = action.payload.user
+    },
     logout: (state) => {
       localStorage.clear()
       state.user = null
@@ -39,7 +43,8 @@ const globalSlice = createSlice({
   },
 })
 
-export const { displayAlert, clearAlert, setUser, logout } = globalSlice.actions
+export const { displayAlert, clearAlert, setUser, setUpdatedUser, logout } =
+  globalSlice.actions
 export default globalSlice.reducer
 
 export const displayAlertThunk =

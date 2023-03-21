@@ -48,6 +48,14 @@ const updateUser = async (req, res, next) => {
     if (!user) {
       throw new ExpressError(404, 'User not found')
     }
+    const emailAlreadyExists = await User.findOne({
+      email: req.body.email,
+      _id: { $ne: user._id },
+    })
+    console.log(emailAlreadyExists)
+    if (emailAlreadyExists) {
+      throw new ExpressError(400, 'Email already in use')
+    }
     user.name = req.body.name || user.name
     user.email = req.body.email || user.email
     if (req.body.password) {

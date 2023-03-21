@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { NavLink, Link } from 'react-router-dom'
 import Wrapper from '../assets/wrappers/Navbar'
 import Logo from './Logo'
@@ -10,11 +10,23 @@ const Navbar = () => {
   const dispatch = useDispatch()
   const { user } = useSelector((state) => state.global)
 
+  const dropdownRef = useRef(null)
   const [toggled, setToggled] = useState(false)
   const [showDropdown, setShowDropdown] = useState(false)
   const handleClick = () => {
     setToggled(!toggled)
   }
+  const disableDropdown = (e) => {
+    if (dropdownRef && !dropdownRef.current.contains(e.target)) {
+      setShowDropdown(false)
+    }
+  }
+  useEffect(() => {
+    document.addEventListener('mousedown', disableDropdown)
+    return () => {
+      document.removeEventListener('mousedown', disableDropdown)
+    }
+  }, [])
   return (
     <Wrapper toggleState={toggled}>
       <Link to='/places' style={{ textDecoration: 'none' }}>
@@ -41,7 +53,8 @@ const Navbar = () => {
           New Place
         </NavLink>
       </div>
-      <div className='navbar-btn'>
+
+      <div ref={dropdownRef} className='navbar-btn'>
         {user ? (
           <>
             <button

@@ -132,6 +132,13 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: ['User'],
     }),
+    updateUser: builder.mutation({
+      query: (values) => ({
+        url: '/auth',
+        method: 'PATCH',
+        body: values,
+      }),
+    }),
   }),
 })
 
@@ -148,4 +155,5 @@ export const {
   useAddNewReviewMutation,
   useGetPlaceReviewsQuery,
   useGetMyPlacesQuery,
+  useUpdateUserMutation,
 } = apiSlice

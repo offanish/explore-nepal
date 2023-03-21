@@ -3,7 +3,7 @@ import Wrapper from '../assets/wrappers/Footer'
 const Footer = () => {
   return (
     <Wrapper>
-      <span>Copyright &copy; 2023</span>{' '}
+      <span>Copyright &copy; 2023 Explore Nepal</span>{' '}
     </Wrapper>
   )
 }

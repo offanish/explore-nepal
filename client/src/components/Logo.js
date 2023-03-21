@@ -2,7 +2,9 @@ import Wrapper from '../assets/wrappers/Logo'
 const Logo = () => {
   return (
     <Wrapper>
-      <h1 className='logo'>Logo</h1>
+      <h1 className='logo'>
+        Explore<span>Nepal</span>
+      </h1>
     </Wrapper>
   )
 }
