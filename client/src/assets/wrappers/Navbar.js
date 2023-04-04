@@ -5,15 +5,21 @@ const Wrapper = styled.nav`
   justify-content: space-between;
   align-items: center;
   padding: 1rem 15%;
-  border-bottom: 2px solid #a9a9a9;
+  border-bottom: 2px solid
+    ${({ theme }) => (theme.dark ? '#636363' : '#a9a9a9')};
   .nav-links {
     display: flex;
+    gap: 2rem;
+  }
+  .nav-utils {
+    display: flex;
+    align-items: center;
     gap: 2rem;
   }
   .nav-link {
     text-decoration: none;
     padding-top: 2px;
-    color: #484848;
+    color: ${({ theme }) => (theme.dark ? '#c7c7c7' : '#484848')};
     height: inherit;
     border-bottom: 2px solid transparent;
     transition: all 0.3s;
@@ -36,6 +42,14 @@ const Wrapper = styled.nav`
   .fa-bars:hover {
     transform: scale(1.1, 1.1);
   }
+  .theme-toggle {
+    cursor: pointer;
+    font-size: 1.25rem;
+    transition: transform 0.2s;
+  }
+  .theme-toggle:hover {
+    transform: scale(1.1);
+  }
   .navbar-btn {
     position: relative;
     /* margin-bottom: 10px; */
@@ -54,7 +68,7 @@ const Wrapper = styled.nav`
     top: 45px;
     width: 100%;
     border-radius: 5px;
-    background-color: #e9e9e9;
+    background-color: ${({ theme }) => (theme.dark ? '#717171' : '#e9e9e9')};
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -66,19 +80,18 @@ const Wrapper = styled.nav`
   .border {
     width: 100%;
     height: 2px;
-    background-color: #ffffff;
+    background-color: ${({ theme }) => (theme.dark ? '#a4a4a4' : '#ffffff')};
   }
   .dropdown-links {
     padding: 8px;
     text-align: center;
     width: 100%;
     text-decoration: none;
-    color: #484848;
+    color: #e7e7e7;
     transition: background-color 0.3s, color 0.3s;
   }
   .dropdown-links:hover {
     background-color: #979797;
-    color: #ffffff;
   }
   @media (max-width: 1000px) {
     padding: 1rem 2%;
@@ -111,6 +124,13 @@ const Wrapper = styled.nav`
       margin-top: 1rem;
       margin-bottom: 1rem;
       align-self: center;
+    }
+    .nav-utils {
+      margin: 0 auto;
+      padding-top: 1rem;
+      gap: 0px;
+      display: ${(props) => !props.toggleState && 'none'};
+      flex-direction: column;
     }
   }
 `

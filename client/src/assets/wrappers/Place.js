@@ -5,7 +5,7 @@ const Wrapper = styled.section`
   gap: 0.8rem;
   border-radius: 0.5rem;
   overflow: hidden;
-  border: 1px solid #d5d5d5;
+  border: 1px solid ${({ theme }) => (theme.dark ? '#484848' : '#d5d5d5')};
   transition: all 0.3s;
   &:hover {
     box-shadow: ${(props) => !props.placePage && '1.5px 1.5px 3px #acacac'};
@@ -48,7 +48,7 @@ const Wrapper = styled.section`
     text-overflow: ellipsis;
     line-height: 1.5;
     font-size: 0.8rem;
-    color: #717171;
+    color: ${({ theme }) => (theme.dark ? '#a2a2a2' : '#717171')};
     margin-bottom: 1rem;
   }
   .description-full {
@@ -69,7 +69,7 @@ const Wrapper = styled.section`
     gap: 0.5rem;
   }
   .place-owner {
-    color: #4a4a4a;
+    color: ${({ theme }) => (theme.dark ? '#c4c4c4' : '#4a4a4a')};
     font-size: 0.9rem;
     font-weight: 500;
   }
@@ -112,7 +112,7 @@ const Wrapper = styled.section`
     color: #e6cb00;
   }
   .rating-star.fa-solid.empty {
-    color: #c5c5c5;
+    color: ${({ theme }) => (theme.dark ? '#8c8c8c' : '#c5c5c5')};
   }
   .review-container {
     background-color: #f3f3f3;

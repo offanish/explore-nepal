@@ -9,12 +9,16 @@ const initialState = {
   showAlert: false,
   user: userFromStorage,
   token: tokenFromStorage,
+  dark: true,
 }
 
 const globalSlice = createSlice({
   name: 'global',
   initialState,
   reducers: {
+    toggleTheme: (state) => {
+      state.dark = !state.dark
+    },
     displayAlert: (state, action) => {
       state.showAlert = true
       state.alertType = action.payload.alertType
@@ -43,8 +47,14 @@ const globalSlice = createSlice({
   },
 })
 
-export const { displayAlert, clearAlert, setUser, setUpdatedUser, logout } =
-  globalSlice.actions
+export const {
+  displayAlert,
+  clearAlert,
+  setUser,
+  setUpdatedUser,
+  toggleTheme,
+  logout,
+} = globalSlice.actions
 export default globalSlice.reducer
 
 export const displayAlertThunk =

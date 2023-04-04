@@ -13,6 +13,11 @@ const Wrapper = styled.section`
     border-bottom-right-radius: 0;
     text-indent: 5px;
     transition: all 0.2s;
+    background-color: transparent;
+    color: inherit;
+  }
+  .search-input::placeholder {
+    color: ${({ theme }) => (theme.dark ? '#a8a8a8' : 'initial')};
   }
   .search-input:focus {
     outline: 1px solid #cd4826;

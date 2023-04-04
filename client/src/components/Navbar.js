@@ -3,7 +3,7 @@ import { NavLink, Link } from 'react-router-dom'
 import Wrapper from '../assets/wrappers/Navbar'
 import Logo from './Logo'
 import { useSelector, useDispatch } from 'react-redux'
-import { displayAlertThunk, logout } from '../state/globalSlice'
+import { displayAlertThunk, logout, toggleTheme } from '../state/globalSlice'
 import { apiSlice } from '../state/apiSlice'
 
 const Navbar = () => {
@@ -27,6 +27,10 @@ const Navbar = () => {
       document.removeEventListener('mousedown', disableDropdown)
     }
   }, [])
+
+  const handleToggleTheme = () => {
+    dispatch(toggleTheme())
+  }
   return (
     <Wrapper toggleState={toggled}>
       <Link to='/places' style={{ textDecoration: 'none' }}>
@@ -53,57 +57,64 @@ const Navbar = () => {
           New Place
         </NavLink>
       </div>
-
-      <div ref={dropdownRef} className='navbar-btn'>
-        {user ? (
-          <>
-            <button
-              className='btn profile-btn'
-              onClick={() => setShowDropdown(!showDropdown)}
-            >
-              <div className='profile-btn-group'>
-                <span>{user.name.split(' ')[0]}</span>
-                <i className='fa-sharp fa-solid fa-caret-down'></i>
+      <div className='nav-utils'>
+        <div className='theme-toggle' onClick={handleToggleTheme}>
+          <i className={`fa-solid fa-sun`}></i>
+        </div>
+        <div ref={dropdownRef} className='navbar-btn'>
+          {user ? (
+            <>
+              <button
+                className='btn profile-btn'
+                onClick={() => setShowDropdown(!showDropdown)}
+              >
+                <div className='profile-btn-group'>
+                  <span>{user.name.split(' ')[0]}</span>
+                  <i className='fa-sharp fa-solid fa-caret-down'></i>
+                </div>
+              </button>
+              <div
+                className={showDropdown ? 'dropdown show-dropdown' : 'dropdown'}
+              >
+                <Link
+                  className='dropdown-links'
+                  to='/profile'
+                  onClick={() => {
+                    setShowDropdown(false)
+                  }}
+                >
+                  Profile
+                </Link>
+                <div className='border'></div>
+                <Link
+                  className='dropdown-links'
+                  onClick={() => {
+                    setShowDropdown(false)
+                    dispatch(logout())
+                    dispatch(
+                      apiSlice.util.invalidateTags({
+                        type: 'Place',
+                        id: 'User',
+                      })
+                    )
+                    dispatch(
+                      displayAlertThunk({
+                        alertType: 'success',
+                        alertText: 'Logged Out Successfully',
+                      })
+                    )
+                  }}
+                >
+                  Logout
+                </Link>
               </div>
-            </button>
-            <div
-              className={showDropdown ? 'dropdown show-dropdown' : 'dropdown'}
-            >
-              <Link
-                className='dropdown-links'
-                to='/profile'
-                onClick={() => {
-                  setShowDropdown(false)
-                }}
-              >
-                Profile
-              </Link>
-              <div className='border'></div>
-              <Link
-                className='dropdown-links'
-                onClick={() => {
-                  setShowDropdown(false)
-                  dispatch(logout())
-                  dispatch(
-                    apiSlice.util.invalidateTags({ type: 'Place', id: 'User' })
-                  )
-                  dispatch(
-                    displayAlertThunk({
-                      alertType: 'success',
-                      alertText: 'Logged Out Successfully',
-                    })
-                  )
-                }}
-              >
-                Logout
-              </Link>
-            </div>
-          </>
-        ) : (
-          <Link className='btn login-btn' to='/sign-up'>
-            Sign In
-          </Link>
-        )}
+            </>
+          ) : (
+            <Link className='btn login-btn' to='/sign-up'>
+              Sign In
+            </Link>
+          )}
+        </div>
       </div>
       <i className='fa-solid fa-bars' onClick={handleClick}></i>
     </Wrapper>
