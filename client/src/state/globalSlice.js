@@ -9,7 +9,7 @@ const initialState = {
   showAlert: false,
   user: userFromStorage,
   token: tokenFromStorage,
-  dark: true,
+  dark: false,
 }
 
 const globalSlice = createSlice({
