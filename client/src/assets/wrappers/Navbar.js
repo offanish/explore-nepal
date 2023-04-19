@@ -87,7 +87,7 @@ const Wrapper = styled.nav`
     text-align: center;
     width: 100%;
     text-decoration: none;
-    color: #e7e7e7;
+    color: ${({ theme }) => (theme.dark ? '#e7e7e7' : '#333333')};
     transition: background-color 0.3s, color 0.3s;
   }
   .dropdown-links:hover {

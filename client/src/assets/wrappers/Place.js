@@ -115,7 +115,7 @@ const Wrapper = styled.section`
     color: ${({ theme }) => (theme.dark ? '#8c8c8c' : '#c5c5c5')};
   }
   .review-container {
-    background-color: #f3f3f3;
+    background-color: ${({ theme }) => (theme.dark ? '#3e3e3e' : '#f3f3f3')};
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
